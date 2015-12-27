@@ -1,17 +1,11 @@
 <a id="top"></a>
 # DevFest Web Development Track
 
-*A short description of your document*
+This guide will teach you fundamental web development concepts by guiding you through the process of building a reading list app. We will begin by setting up a basic webpage in Flask, and then incrementally add features level-by-level. After finishing this tutorial, you will have a fully-functional reading list app where you can display a list of your favorite books.
 
-Written and developed by [your name](http://yourwebsite.com or mailto:your@email.com) and [ADI](adi).
+Written and developed by [Raymond](http://www.raymondxu.io), Matt, and [ADI](http://www.adicu.com).
 
 <a href="#top" class="top" id="getting-started">Top</a>
-## Getting Started
-
-### Subsections
-
-### What will this tutorial teach me?
-
 ## Using this Document
 
 ### Running the Sample Code
@@ -21,29 +15,48 @@ You can find sample code on [GitHub][github]
 <a href="#top" class="top" id="table-of-contents">Top</a>
 ## Table of Contents
 
--	[1.0 Section](#section)
+-	[Level 0: Environment Setup](#level0)
+-	[Level 1: Hello World](#level1)
 	-	[1.1 Subsection](#subsection)
--	[2.0 Another Section](#another-section)
-	-	[2.1 Another Subsection](#another-subsection)
+-	[Level 2: CSS](#level2)
+	-	[2.1 Subsection](#another-subsection)
+-	[Level 3: APIs](#level3)
+	-	[3.1 Subsection](#another-subsection)
+-	[Level 4: Databases](#level4)
+	-	[4.1 Subsection](#another-subsection)
+-	[Level 5: User sessions](#level5)
+	-	[5.1 Subsection](#another-subsection)
 -   [Additional Resources](#additionalresources)
 
 
 ------------------------------
 <a href="#top" class="top" id="section">Top</a>
-## 1.0 Section
+## Level 0: Environment Setup
 
 
-<a id="subsection"></a>
-### 1.1 Subsection
-
-___________
-<a href="#top" class="top" id="another-section">Top</a>
-## 2.0 Another Section
+<a href="#top" class="top" id="level1">Top</a>
+## Level 1: Hello World
 
 <a id="another-subsection"></a>
-### 2.1 Another Subsection
+### 1.1 Subsection
 
-___________
+
+<a href="#top" class="top" id="level2">Top</a>
+## Level 2: CSS
+
+
+<a href="#top" class="top" id="level3">Top</a>
+## Level 3: APIs
+
+
+<a href="#top" class="top" id="level4">Top</a>
+## Level 4: Databases
+
+
+<a href="#top" class="top" id="level5">Top</a>
+## Level 5: User sessions
+
+
 <a href="#top" class="top" id="additionalresources">Top</a>
 ## Additional Resources
 
