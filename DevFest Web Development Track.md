@@ -45,9 +45,9 @@ Basic knowledge of the Python programming language is suggested. If you don't al
 		-	[2.1.2 Selectors](#selectors)
 		-	[2.1.3 Basic Properties and Values](#basic-properties-and-values)
 	-	[2.2 External Libraries](#external-libraries)
-		-	[2.2.1 Installation and Template Setup](#installation-and-template-setup)
-		-	[2.2.2 Using Foundation](#using-foundation)
-	-	[2.3 Adding CSS to our Project](#adding-css-to-our-project)
+		-	[2.2.1 Using Foundation](#using-foundation)
+		-	[2.2.2 Installation and Template Setup](#installation-and-template-setup)
+		-	[2.2.3 Adding CSS to our Project](#adding-css-to-our-project)
 -	[Level 3: Adding Search Functionality: APIs](#level3)
 	-	[3.1 API Basics](#api-basics)
 		-	[3.1.1 REST APIs](#rest-apis)
@@ -117,7 +117,7 @@ This is a very basic directory structure for a Flask webapp.
 	-	`js/` - Javascript files, which allow interactive web content. We'll talk about these [later](#installation-and-template-setup).
 	-	`css/` - CSS files, which style our app.  We'll talk about these [later](#css) too.
 	-	`img/` - Image files.
--	`templates/` - This folder holds all your Flask templates.  Our HTML files will go here.  There are special features offered by Flask that make templates different than basic HTML files, explored in [Section 3.2](#templating-in-flask).
+-	`templates/` - This folder holds all your Flask templates.  Our HTML files will go here.  There are special features offered by Flask that make templates different than basic HTML files, explored in [Section 3.3](#templating-in-flask).
 
 <a href="#top" class="top" id="hello-world-in-flask">Top</a>
 ## 1.2 Hello World in Flask
@@ -273,7 +273,7 @@ Save and reload your server as needed, and navigate to `http://localhost:5000/se
 <a href="#top" class="top" id="html-basics">Top</a>
 ## 1.4 HTML Basics
 
-<a id="what-is-HTML"></a>
+<a id="what-is-html"></a>
 ### 1.4.1 What is HTML
 
 [HTML][html], or HyperText Markup Language is the main lanugage we use for creating content that will be displayed by a browser.  So what is HTML?  Well, at the very core, it's text.  Create a file in your working directory, and call it `hello.html`.  Inside it, just type:
@@ -308,7 +308,7 @@ Hello World!
 <p>This is a <em><strong>really</strong> cool</em> paragraph</p>
 ```
 
-If you reaload `hello.html`, you should see that "really cool" is in italics, and "really" is also in bold.  Does that mean the the `<em>` is used to make words italic and `<strong>` is used to make them bold?  No.  Most web browsers have agreed that emphasis should be expressed using italics, and strong emphasis should be expressed with bold font, but as writers of HTML, we use tags to describe the purpose of the content, not to acheive the format that we see once they're applied.
+If you reload `hello.html`, you should see that "really cool" is in italics, and "really" is also in bold.  Does that mean the the `<em>` is used to make words italic and `<strong>` is used to make them bold?  No.  Most web browsers have agreed that emphasis should be expressed using italics, and strong emphasis should be expressed with bold font, but as writers of HTML, we use tags to describe the purpose of the content, not to acheive the format that we see once they're applied.
 
 ##### Headings
 
@@ -425,7 +425,7 @@ There are many HTML elements that you will use for your website.  There are some
 
 **DO NOT SKIM THIS NEXT PARAGRAPH**
 
-Please, please, please use MDN.  There is another site, called W3 schools (hyperlink intentionally excluded) that consitently turns up higher in Google search rankings, and consistently has incorrect, outdated, and more confusing information on the same topics.  If you have a question about web development (generally HTML, CSS, or JavaScript), just append "mdn" to the end of your search, to make sure that you get MDN as the top result.  The team at Mozilla has done an excellent job of making an excellent website that has the most up-to-date information about good web development practices. 
+Please, please, please use MDN.  There is another site, called W3 schools (hyperlink intentionally excluded) that consistently turns up higher in Google search rankings, and consistently has incorrect, outdated, and more confusing information on the same topics.  If you have a question about web development (generally HTML, CSS, or JavaScript), just append "mdn" to the end of your search, to make sure that you get MDN as the top result.  The team at Mozilla has done an excellent job of making an excellent website that has the most up-to-date information about good web development practices. 
 
 ##### Structure
 -   `<html>` [(MDN)][mdn-html] - All HTML should be wrapped in the `<html>` element.  It should be the only element at the top level of an HTML document (except `<DOCTYPE>`).
@@ -484,7 +484,23 @@ Except the `<DOCTYPE>` tag, all of these elements should be children of the `<he
 
 
 <a id="a-simple-example-hello-html"></a>
-### 1.4.4 A Simple Example: hello.html
+### 1.4.4 The Landing Page
+
+Let's turn `hello.html` into the landing page for our app!
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Reading List App</title>
+	</head>
+	<body>
+		<h1>Reading List App</h1>
+		<p>This web app allows users to search for books and add them to their reading lists!</p>
+	</body>
+</html>
+```
 
 Flask uses something called templates to make writing HTML more modular. We will go in-depth on templating in a later section, but let's set up a simple HTML page here. Let's make our Flask app return `hello.html` as a template.  First,  move `hello.html` into the `templates` folder.  Then, in `app.py`, import `render_template` from the `flask` package:
 
@@ -511,9 +527,9 @@ Reload the server and visit `localhost:5000`.  You'll see `hello.html`, but this
 <a id="the-search-page"></a>
 ### 1.4.2 The Search Page
 
-Let's write an interface for users to search in HTML.
+Now let's write the web page where users can search for books!
 
-First start by creating a template called `search.html` in the `templates` folder.  Copy in the boilerplate from [section 3.1.2](#anatomy-of-an-html-document) into this file, changing the title of the page to `Search`.
+First start by creating a template called `search.html` in the `templates` folder like such:
 
 ```html
 <!DOCTYPE html>
@@ -590,11 +606,33 @@ Now we have our completed `search.html`:
 
 Right now the button doesn't do anything, but we will add functionality to it in [Level 3](#level3).
 
+Let's connect our landing page (`hello.html`) to our search page (`search.html`).
+
+To do so, we just need to add a button to `hello.html` that links to `search.html`
+
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Reading List App</title>
+	</head>
+	<body>
+		<h1>Reading List App</h1>
+		<p>This web app allows users to search for books and add them to their reading lists!</p>
+		<a href="/search"><button>Launch App</button></a>
+	</body>
+</html>
+```
+
+Try it out by going to `localhost:5000` and clicking the button!
+
 
 <a href="#top" class="top" id="level2">Top</a>
 ## Level 2: CSS
 
-Now that we have a basic web page, let's add some styling to it!
+Now that we have a basic landing page, let's add some styling to it so it doesn't look so bland!
 
 [CSS][css], or Cascading Style Sheets, is a styling language that is used to arrange and stylize HTML elements. CSS is extremely powerful, but also fairly hard to learn. Every different browser interprets CSS slightly differently, and there are a lot of tricks and best practices that are hard to learn. As such, CSS is best learned by lots and lots of practice. The [ADI Resources][learn] page has links to a lot of different tutorials and walkthroughs, if you want more practice after styling your Flask app.
 
@@ -1085,181 +1123,9 @@ We'll be using Foundation, because it's slimmer and simpler, and will provide a 
 
 One other thing before we get started: on the Foundation website, you will continue to see references to "Sass" or "SCSS".  These are languages that extend the CSS syntax. They are more powerful, but harder to learn and develop in for the first time.  We are using "Foundation CSS", which is Foundation that uses raw CSS instead of Sass.  When we go onto the documentation page for different Foundation components you will see a section called "Customize with Sass" at the bottom.  For the purposes of our app, we can ignore this. 
 
-<a id="installation-and-template-setup"></a>
-### 2.2.1 Installation and Template Setup
-
-Installing Foundation is as easy as 1 2 3.
-
-#### 1. Download
-
-Go to [the Foundation download page][foundation-download] and click the blue "Download Foundation CSS" button.  It will download the latest version of Foundation 5 (5.0.3 at the time of writing) in a zip file called `foundation-5.0.3.zip`.
-
-#### 2. Integrate
-
-Unzip `foundation-5.0.3.zip`.  Inside, you'll see a couple of files and folders, but the ones we care about are `css` and `js`.  Remember how we have a `css` and `js` folder under the `static` folder of our Flask app?  Copy all the files from `<Download_Directory>/foundation-5.0.3/css` into `<Project_Directory>/static/css` and all the files from `<Download_Directory>/foundation-5.0.3/js` into `<Project_Directory>/static/js`.
-
-> Curious what Foundation looks like?  You could poke around the Foundation documentation, or open `index.html` with all the CSS and JS still in the `foundation-5.0.3` folder.  Pretty slick looking!
-
-#### 3. Template
-
-On the bottom of the "Getting Started With Foundation CSS" page, Zurb includes a section called [HTML Page Markup][foundation-html], which has a boilerplate for a basic Foundation app, reproduced here:
-
-```html
-<!DOCTYPE html> 
-<!--[if IE 9]><html class="lt-ie10" lang="en" > <![endif]--> 
-<html class="no-js" lang="en" > 
-	
-<head> 
-  <meta charset="utf-8"> 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-  <title>Foundation 5</title> 
-
-  <!-- If you are using CSS version, only link these 2 files, you may add app.css to use for your overrides if you like. --> 
-  <link rel="stylesheet" href="css/normalize.css"> 
-  <link rel="stylesheet" href="css/foundation.css"> 
-
-  <!-- If you are using the gem version, you need this only --> 
-  <link rel="stylesheet" href="css/app.css"> 
-  <script src="js/vendor/modernizr.js"></script> 
-</head> 
-<body> 
-  
-  <!-- body content here --> 
-
-  <script src="js/vendor/jquery.js"></script> 
-  <script src="js/foundation.min.js"></script> 
-  <script> 
-  	$(document).foundation(); 
-  </script> 
-</body> 
-</html>
-```
-
-Because we are building an app in Flask however, we are going to take advantage of the Jinja2 templating that we discovered in [section 3.2](#templating-in-flask).  Foundation recommends that all the pages for our app have this boilerplate, so we'll make a Flask Template out of it that all of the rest of our pages will inherit.
-
-Let's start with our base template.  Copy Foundation's boilerplate code (above) into a new file in the `templates` directory called `base.html`.  We'll make some modifications to make this template work with Flask.
-
-First, let's focus on the `<head>` element.  Feel free to remove their comments, and let's change the title to be more modular, by making it a Jinja2 `{% block %}` that we can extend with other templates:
-
-```html
-...
-<head> 
-  <meta charset="utf-8"> 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-  <title>{% block title %}{% endblock %}</title> 
-
-  <link rel="stylesheet" href="css/normalize.css"> 
-  <link rel="stylesheet" href="css/foundation.css"> 
-  <link rel="stylesheet" href="css/app.css"> 
-
-  <script src="js/vendor/modernizr.js"></script> 
-</head>
-...
-```
-
-Now whatever we put put in the `title` block in the child template will show up as the `<title>` of the page.  Note that we also link to `css/app.css`, which is for CSS code specific to our app (Never edit any of the foundation files!).  Create an empty file called `app.css` in the `css` folder, that we will add code to later:
-
-```css
-/* app.css */
-```
-
-We also should provide a `body` block, where the content of the child page will go:
-
-```html
-... 
-<body> 
-
-  {% block body %}{% endblock %}
-
-  <script src="js/vendor/jquery.js"></script> 
-...
-```
-
-Finally, we need to modify the imports.  Because the Flask directory structure is more complicated, the path from the HTML document to the `css` directory is more complicated.  To deal with this,  Flask provides a shortcut to the `static` directory that we can embed in our HTML document, so that even if we rearrange where the `static` directory is, our templates will always find the CSS files.
-
-Everywhere we have `href` or `src` attributes `="<filename>"`, we'll replace it with `="{{ url_for('static', filename='<filename>') }}"`.   The `{{ }}` indicates a Jinja2 variable, and then the `url_for()` function provided by flask gets the URL of the file with path `'<filename>'` from the `'static'` folder.  Here is our completed `base.html`:
-
-```html
-<!DOCTYPE html>
-<!--[if IE 9]><html class="lt-ie10" lang="en" > <![endif]-->
-<html class="no-js" lang="en" >
-
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}{% endblock %}</title>
-
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/foundation.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
-
-  <script src="{{ url_for('static', filename='js/vendor/modernizr.js') }}"></script>
-</head>
-<body>
-  {% block body %}{% endblock %}
-
-  <script src="{{ url_for('static', filename='js/vendor/jquery.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/foundation.min.js') }}"></script>
-  <script>
-  	$(document).foundation();
-  </script>
-</body>
-</html>
-```
-
-It's a bit messy, and definitely pretty long for a web page without any content, but that's why we'll relegate all our imports to this file.
-
-All that's left to do is modify `hello.html`, `search.html` to extend from `base.html` (using both the `body` and `title` blocks).  Why not `results.html`? Because it already extends from `search.html` so we have our bases covered there. *This is exactly why we use template inheritance &mdash; so that our templates are simple, short, and to make refactoring easy.*
-
-<h1 class="join"></h1>
-```html
-{% extends "base.html" %}
-<!-- hello.html -->
-{% block title %}
-Hello World!
-{% endblock %}
-
-{% block body %}
-<h1>Hello World!</h1>
-<p>This is a <em><strong>really</strong> cool</em> paragraph.  My favorite search engine is <a href="http://www.google.com">Google</a></p>
-{% endblock %}
-```
-```html
-{% extends "base.html" %}
-<!-- search.html -->
-{% block title %}
-Search | Has it Been Made Yet?
-{% endblock %}
-
-{% block body %}
-<h1>Search</h1>
-<form action="/search" method="post">
-  <input type="text" 
-    placeholder="Search for your idea" 
-    name="user_search" required/>
-  <button type="submit">Search</button>
-</form>
-{% block results %}{% endblock %}
-{% endblock %}
-```
-<h1 class="clear"></h1>
-
-It also might be nice to update our `hello.html` to reflect the purpose of our web app. (We've moved far beyond "Hello World".) The link to `"/search"` will send users to `yourapp.com/search`, or in our local development case `localhost:5000/search`.
-
-```html
-{% extends "base.html" %}
-<!-- hello.html -->
-{% block title %}Welcome | Has it Been Made Yet?{% endblock %}
-
-{% block body %}
-<h1>Has it Been Made Yet?</h1>
-<h2>A tool for hackers with "unique" ideas.</h2>
-<a href="/search">Launch</a>
-{% endblock %}
-```
 
 <a id="using-foundation"></a>
-### 2.2.2 Using Foundation
+### 2.2.1 Using Foundation
 
 Using Foundation can be as simple as applying some extra classes to HTML elements, applying the imported CSS.  For general purpose "style-based" changes this is fine. (The class `button` will make an `<a>` tag look like a button, and so on. Just look up the component your are styling in the [Foundation docs][foundation-docs] and you'll be fine.) While Foundation offers many shortcuts to attractively styled pages, it also provide "layout-based" classes that are used for placing elements appropriately on the page.  Chief among these is Foundation's [grid system][foundation-grid].
 
@@ -1301,12 +1167,104 @@ The grid system can be a little daunting, but with practice and [the documentati
 
 
 
+
+<a id="installing-foundation"></a>
+### 2.2.2 Installing Foundation
+
+Installing Foundation is as easy as 1 2 3.
+
+#### 1. Download
+
+Go to [the Foundation download page][foundation-download] and click the blue "Download Foundation CSS" button.  It will download the latest version of Foundation 5 in a zip file.
+
+#### 2. Integrate
+
+Unzip the file.  Inside, you'll see a couple of files and folders, but the ones we care about are `css` and `js`.  Remember how we have a `css` and `js` folder under the `static` folder of our Flask app?  Copy all the files from `<Download_Directory>/foundation-x.x.x/css` into `<Project_Directory>/static/css` and all the files from `<Download_Directory>/foundation-x.x.x/js` into `<Project_Directory>/static/js`.
+
+> Curious what Foundation looks like?  You could poke around the Foundation documentation, or open `index.html` with all the CSS and JS still in the `foundation-x.x.x` folder.  Pretty slick looking!
+
+#### 3. Template
+
+On the bottom of the "Getting Started With Foundation CSS" page, Zurb includes a section called [HTML Page Markup][foundation-html], which has a boilerplate for a basic Foundation app, reproduced here:
+
+```html
+<!DOCTYPE html> 
+<!--[if IE 9]><html class="lt-ie10" lang="en" > <![endif]--> 
+<html class="no-js" lang="en" > 
+	
+<head> 
+  <meta charset="utf-8"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+  <title>Foundation 5</title> 
+
+  <!-- If you are using CSS version, only link these 2 files, you may add app.css to use for your overrides if you like. --> 
+  <link rel="stylesheet" href="css/normalize.css"> 
+  <link rel="stylesheet" href="css/foundation.css"> 
+
+  <!-- If you are using the gem version, you need this only --> 
+  <link rel="stylesheet" href="css/app.css"> 
+  <script src="js/vendor/modernizr.js"></script> 
+</head> 
+<body> 
+  
+  <!-- body content here --> 
+
+  <script src="js/vendor/jquery.js"></script> 
+  <script src="js/foundation.min.js"></script> 
+  <script> 
+  	$(document).foundation(); 
+  </script> 
+</body> 
+</html>
+```
+
+Apply Foundation's boilerplate code (above) to `search.html` while preserving the content.
+
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Search</title>
+  		<link rel="stylesheet" href="static/css/foundation.css">
+  		<link rel="stylesheet" href="static/css/normalize.css">
+  		<link rel="stylesheet" href="static/css/app.css">
+  		<script src="static/js/modernizr.js"></script> 
+	</head>
+	<body>
+		<h1>Search</h1>
+        <form action="/search" method="post">
+            <input type="text" placeholder="Search for your idea" name="user_search" required/>
+            <button type="submit">Search</button>
+        </form>
+
+		<script src="static/js/jquery.js"></script>
+		<script src="static/js/foundation.min.js"></script>
+		<script> 
+    		$(document).foundation(); 
+  		</script> 
+	</body>
+</html>
+```
+
+Note that we also link to `css/app.css`, which is for CSS code specific to our app (Never edit any of the foundation files!).  Create an empty file called `app.css` in the `css` folder, that we will add code to later:
+
+```css
+/* app.css */
+```
+
+
 <a id="adding-css-to-our-project"></a>
 ### 2.3 Adding CSS to Our Project
 
-Now that you've learned the basics of CSS, let's add some styling to our web page!
+Now that you've learned the basics of CSS and Foundation, let's add some styling to our landing page!
 
-# +CONTENT
+# CONTENT
+
+
+
+
 
 
 <a href="#top" class="top" id="level4">Top</a>
