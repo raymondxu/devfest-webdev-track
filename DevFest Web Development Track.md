@@ -3,7 +3,7 @@
 
 *Learn web development with Flask.*
 
-Written and developed by [Raymond](http://www.raymondxu.io), Matt, Dan, and [ADI](http://www.adicu.com).
+Written and developed by Dan, [Raymond](http://www.raymondxu.io), Matt, and [ADI](http://www.adicu.com).
 
 <a href="#top" class="top" id="getting-started">Top</a>
 ## About This Document
@@ -34,7 +34,7 @@ Basic knowledge of the Python programming language is suggested. If you don't al
 		-	[1.3.1 Static Routes](#static-routes)
 		-	[1.3.2 Dynamic Routes](#dynamic-routes)
 	-	[1.4 HTML Basics](#html-basics)
-		-	[1.4.1 What is HTML](#what-is-HTML)
+		-	[1.4.1 What is HTML](#what-is-html)
 		-	[1.4.2 Anatomy of an HTML Document](#anatomy-of-an-html-document)
 		-	[1.4.3 An Overview of Common Tags](#an-overview-of-common-tags)
 		-	[1.4.4 The Landing Page](#a-simple-example-hello-html)
@@ -55,7 +55,7 @@ Basic knowledge of the Python programming language is suggested. If you don't al
 		-	[3.1.3 Data in JSON](#data-in-json)
 		-	[3.1.4 Viewing JSON in the Browser](#viewing-json-in-the-browser)
 		-	[3.1.5 Extension: HTTP](#http)
-	-	[3.2 Google Books Search API](#google-books-search-api)
+	-	[3.2 Google Books API](#google-books-api)
 		-	[3.2.1 Determining the Request URL](#determining-the-request-url)
 		-	[3.2.2 Using cURL](#using-curl)
 		-	[3.2.3 Using Python](#using-python)
@@ -1245,7 +1245,7 @@ Apply Foundation's boilerplate code (above) to `hello.html` while preserving the
 </html>
 ```
 
-Note that we also link to `css/app.css`, which is for CSS code specific to our app (Never edit any of the foundation files!).  Create an empty file called `app.css` in the `css` folder, that we will add code to later:
+Note that we also link to `css/app.css`, which is for CSS code specific to our app (Never edit any of the Foundation files!).  Create an empty file called `app.css` in the `css` folder, that we will add code to later:
 
 ```css
 /* app.css */
@@ -1258,7 +1258,7 @@ Note that we also link to `css/app.css`, which is for CSS code specific to our a
 Now that you've learned the basics of CSS and Foundation, let's add some styling to our landing page!
 
 
-Let's first use foundation to add some structure to the content! Modify `hello.html` to wrap the body's content in the `row`, `large-12 columns`, and `panel` classes.
+Let's first use Foundation to add some structure to the content! Modify `hello.html` to wrap the body's content in the `row`, `large-12 columns`, and `panel` classes.
 
 ```html
 ...
@@ -1268,7 +1268,7 @@ Let's first use foundation to add some structure to the content! Modify `hello.h
 			<div class="panel">
 				<h1>Reading List App</h1>
 				<p>This web app allows users to search for books and add them to their reading lists!</p>
-				<a href="/search"><button class="launch-button">Launch App</button></a>
+				<a href="/search"><button>Launch App</button></a>
 			</div>
 		</div>
 	</div>
@@ -1311,13 +1311,11 @@ Let's fix the styling of our text so that it stands out from the background. Add
 }
 ```
 
-Lastly, let's make our button more interesting! Add the following lines to `app.css`.
+Lastly, let's make our buttons more interesting! Add the following lines to `app.css`.
 
 ```css
 button {
 	background-color: #FF9900;
-	margin-top: 25px;
-	padding: 30px;
 	color: #EEEEEE;
 	font-size: 1.5rem;
 	font-weight: 500;
@@ -1326,6 +1324,31 @@ button {
 button:hover {
 	background-color: #D77E22;
 }
+
+.launch-button {
+	margin-top: 25px;
+	padding: 30px;
+}
+
+.search-button {
+	padding: 5px 20px;
+}
+```
+
+Now that we've defined the `launch-button` and `search-button` classes, add them into the HTML! In `hello.html`:
+
+```html
+...
+<a href="/search"><button class="launch-button">Launch App</button></a>
+...
+```
+
+And in `search.html`:
+
+```html
+...
+<button class="postfix search-button" type="submit">Search</button>
+...
 ```
 
 Now we have a basic landing page styled using CSS and foundation. We will style the rest of our app after we finish implementing its functionality.
@@ -1360,7 +1383,7 @@ The advantage in using a REST API here is that we don't need to remember the URL
 
 From here out we will be using some increasingly complex [URLs][urls], and it is important to develop a vocabulary for the parts of the url and their purpose.  To do this, we will dissect this url (which we will use in [section 3.2](#the-google-books-api) when we work with the Google Books API):
 
-	https://www.googleapis.com/books/v1/volumes?q=treasure
+	https://www.googleapis.com/books/v1/volumes?q=Treasure
 
 This URL breaks up into five parts:
 
@@ -1368,7 +1391,7 @@ This URL breaks up into five parts:
 2.	The separator (`://`): A colon and two slashes always follow the protocol and are used to separate the protocol and the host.
 3.	The host (`\(www.\) ??? googleapis.com`): A host is usually a domain name (this is the case for our url), but it could also be an IP Address.
 4.	The path (`/books/v1/volumes`): Everything from the first `/` up to the `?` that starts the query string is the path. When accessing a web page, often these paths will be hierarchical and include a filename at the end, like `/blog/2014/02/post.html`.  When making API calls, these paths are the API method that is being called.  Here, we are searching books.
-5.	The query string (`q=treasure`): is af key-value pair of the form `<key>=<value>`. The query string starts with a `?` and have have multiple key-value pairs that are separated by `&`. The key value pairs here are:
+5.	The query string (`q=Treasure`): is af key-value pair of the form `<key>=<value>`. The query string starts with a `?` and have have multiple key-value pairs that are separated by `&`. The key value pairs here are:
 
 
 > This URL schema is by no means complete; it encompasses the parts of a URL that are most relevant to API programming.  For a more complete view, check out [this blog post][url-google] by Google's Matt Cutts, or this exhaustive [Wikipedia entry][url-wikipedia].
@@ -1663,9 +1686,9 @@ Before we can try to parse Google Books search data, we need to determine the co
 
 Now let's examine the query string piece by piece.
 
-For the `q` key, we want the search query.   For our testing we'll use `treasure island`.  We have to encode that string to be URL safe, so we'll use `treasure%20island (The space character needs to be encoded to `%20`).
+For the `q` key, we want the search query.   For our testing we'll use `Treasure Island`.  We have to encode that string to be URL safe, so we'll use `Treasure%20Island` (The space character needs to be encoded to `%20`).
 
-	https://www.googleapis.com/books/v1/volumes?q=treasure%20island
+	https://www.googleapis.com/books/v1/volumes?q=Treasure%20Island
 
 If you put that URL into your browser, you should see the JSON response!
 
@@ -1682,13 +1705,13 @@ Change directory into your *working directory*, or the directory where `app.py` 
 Type the following command:
 
 ```bash
-$ curl https://www.googleapis.com/books/v1/volumes?q=treasure%20island
+$ curl https://www.googleapis.com/books/v1/volumes?q=Treasure%20Island
 ```
 
 You should see the entire JSON response (probably pretty long!) print to the console.  Now lets write that response to a file:
 
 ```bash
-$ curl https://www.googleapis.com/books/v1/volumes?q=treasure%20island > response.json
+$ curl https://www.googleapis.com/books/v1/volumes?q=Treasure%20Island > response.json
 ```
 
 > The `> response.json` section redirects all the output that would normally be sent to the console into the `response.json` file.
@@ -1723,7 +1746,7 @@ Now all we need to to is call `requests.get()` on the API url we developed in [s
 ```python
 import requests
 
-url = "https://www.googleapis.com/books/v1/volumes?q=treasure%20island"
+url = "https://www.googleapis.com/books/v1/volumes?q=Treasure%20Island"
 response = requests.get(url)
 
 print response
@@ -1740,7 +1763,7 @@ The only other thing we need is to get usable data is to convert the response ob
 ```python
 import requests
 
-url = "https://www.googleapis.com/books/v1/volumes?q=treasure%20island"
+url = "https://www.googleapis.com/books/v1/volumes?q=Treasure%20Island"
 response = requests.get(url)
 response_dict = response.json()
 
@@ -1760,7 +1783,7 @@ This gives us, again a very large dictionary, printed to the screen.
 
 Adapting our Python code to work in our search route will be pretty simple, but there are a few constraints:
 
--	We want to search Google Books for the search query that the client sends, not our test string "treasure island"
+-	We want to search Google Books for the search query that the client sends, not our test string "Treasure Island"
 -	We need to return valid HTML in our route, not a Python dictionary or a Response object.
 
 Addressing the first issue is simple.  We'll let the `url` string be the base search URL concatenated with the `search_query` variable. Don't forget to import `requests`!
@@ -1795,7 +1818,7 @@ def search(search_query):
 ...
 ```
 
-With your Flask server running, navigate to `localhost:5000/search/treasure%20island"` and see all the results right in your browser (full circle!).
+With your Flask server running, navigate to `localhost:5000/search/Treasure%20Island"` and see all the results right in your browser (full circle!).
 
 Try changing what comes after the `/search/` and see the results change.
 
@@ -1839,12 +1862,12 @@ JavaScript can use to fetch new data without loading a new page (it's how your G
 without you refreshing the page). Create another file called `script.js` with the following lines:
 
 ```javascript
-$.getJSON("https://www.googleapis.com/books/v1/volumes?q=treasure%20island", function(data) {
+$.getJSON("https://www.googleapis.com/books/v1/volumes?q=Treasure%20Island", function(data) {
 	console.log(data);
 });
 ```
 
-Here (as before), we fetch all books that match the string "treasure island" and are written in JavaScript; we
+Here (as before), we fetch all books that match the string "Treasure Island" and are written in JavaScript; we
 then print it out to the JavaScript console (which can be accessed in the "Developer Tools" for Firefox (`Ctrl-Shift-K`)
 or Chrome (`Ctrl-Shift-J`) (or `Cmd` for OS X).
 
