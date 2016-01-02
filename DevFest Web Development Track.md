@@ -1330,8 +1330,6 @@ button:hover {
 
 Now we have a basic landing page styled using CSS and foundation. We will style the rest of our app after we finish implementing its functionality.
 
-![The Styled Landing Page](images/2.3.png)
-
 
 <a href="#top" class="top" id="level3">Top</a>
 ## Level 3: APIs
@@ -1340,7 +1338,7 @@ Now we have a basic landing page styled using CSS and foundation. We will style 
 <a href="#top" class="top" id="api-basics">Top</a>
 ## 3.1 API Basics
 
-This section will take a step aside from our Flask project to build a foundation of knowledge around APIs and how they are used.  We will return to our app in [section 2.2](#the-github-search-api).
+This section will take a step aside from our Flask project to build a foundation of knowledge around APIs and how they are used.  We will return to our app in [section 3.2](#the-google-books-api).
 
 <a id="rest-apis"></a>
 ### 3.1.1 REST APIs
@@ -1360,29 +1358,18 @@ The advantage in using a REST API here is that we don't need to remember the URL
 <a id="the-anatomy-of-a-url"></a>
 ### 3.1.2 The Anatomy of a URL
 
-From here out we will be using some increasingly complex [URLs][urls], and it is important to develop a vocabulary for the parts of the url and their purpose.  To do this, we will dissect this url (which we will use in [section 2.2](#the-github-search-api) when we work with Github's API):
+From here out we will be using some increasingly complex [URLs][urls], and it is important to develop a vocabulary for the parts of the url and their purpose.  To do this, we will dissect this url (which we will use in [section 3.2](#the-google-books-api) when we work with the Google Books API):
 
-	https://api.github.com/search/repositories?q=tetris+language:assembly&sort=stars&order=desc
+	https://www.googleapis.com/books/v1/volumes?q=treasure
 
 This URL breaks up into five parts:
 
 1.	The protocol (`https`): We are using the [HTTPS][https] protocol, which is a secure version of HTTP, detailed in [section 2.1.5](#http).
 2.	The separator (`://`): A colon and two slashes always follow the protocol and are used to separate the protocol and the host.
-3.	The host (`api.github.com`): A host is usually a domain name (this is the case for our url), but it could also be an IP Address.
-4.	The path (`/search/repositories`): Everything from the first `/` up to the `?` that starts the query string is the path. When accessing a web page, often these paths will be hierarchical and include a filename at the end, like `/blog/2014/02/post.html`.  When making API calls, these paths are the API method that is being called.  Here, we are searching repositories.
-5.	The query string (`?q=tetris+language:assembly&sort=stars&order=desc`): is a series of key-value pairs of the form `<key>=<value>`. The query string starts with a `?` and each key-value pair is separated by `&`.  The key value pairs here are:
+3.	The host (`\(www.\) ??? googleapis.com`): A host is usually a domain name (this is the case for our url), but it could also be an IP Address.
+4.	The path (`/books/v1/volumes`): Everything from the first `/` up to the `?` that starts the query string is the path. When accessing a web page, often these paths will be hierarchical and include a filename at the end, like `/blog/2014/02/post.html`.  When making API calls, these paths are the API method that is being called.  Here, we are searching books.
+5.	The query string (`q=treasure`): is af key-value pair of the form `<key>=<value>`. The query string starts with a `?` and have have multiple key-value pairs that are separated by `&`. The key value pairs here are:
 
-	Key | Value
-	----|--------------------------
-	`q` | `tetris+language:assembly`
-	`sort` | `stars`
-	`order` | `desc`
-
-
-	>Note that the `+` and `:` do not denote keys or values, and are all part of the `q` value.  The inclusion of these characters is specific to Github's API, and we will learn more about why they are there in [section 2.2](#the-github-search-api).  From a URL standard perspective, `tetris+language:assembly` is one big value for the `q` key.
-
-
-	For the most part, the job of the query string is to specify the details of the data being returned.  While the `q` key is somewhat complicated, we can see clearly that the results of this search are being sorted by stars in descending order.
 
 > This URL schema is by no means complete; it encompasses the parts of a URL that are most relevant to API programming.  For a more complete view, check out [this blog post][url-google] by Google's Matt Cutts, or this exhaustive [Wikipedia entry][url-wikipedia].
 
@@ -1662,29 +1649,23 @@ hit `Ctrl-Shift-I` to open Developer tools and navigate to the "Network" tab (Ma
 browse the internet a little. Check out [here](http://www.example.com) for an example of a successful request, and
 [here](http://www.adicu.com/notfound) for an example of an unsuccessful request.
 
-<a href="#top" class="top" id="google-books-search-api">Top</a>
-## 3.2 Google Books Search API
+<a href="#top" class="top" id="google-books-api">Top</a>
+## 3.2 Google Books API
 
-In order to figure out whether or not someone has made the app that was searched for using our search route (started in [1.3.2](#dynamic-routes)), we'll use the Github Search API.  The first step for using any API is to familiarize yourself with its documentation, and so our first stop is [developer.github.com/v3/search][github-search-docs].  We know that we want to search for repositories, so we'll focus on the ["Search repositories" section][github-search-docs-repos].
+In order to figure out whether or not someone has made the app that was searched for using our search route (started in [1.3.2](#dynamic-routes)), we'll use the Google Books API.  The first step for using any API is to familiarize yourself with its documentation, and so our first stop is [https://developers.google.com/books/docs/v1/reference/][google-books-docs].  We know that we want to search for books, so we'll focus on the ["Volume" section][google-books-docs-volume].
 
 <a id="determining-the-request-url"></a>
 ### 3.2.1 Determining the Request URL
 
-Before we can try to parse Github search data, we need to determine the correct request URL, including the correct query string.  We know the protocol, domain, and path.  Don't forget the `https`!
+Before we can try to parse Google Books search data, we need to determine the correct request URL, including the correct query string.  We know the protocol, domain, and path.  Don't forget the `https`!
 
-	https://api.github.com/search/repositories
+	https://www.googleapis.com/books/v1/volumes
 
 Now let's examine the query string piece by piece.
 
-For the `q` key, we want the search query.   For our testing we'll use `Space Invaders HTML5`.  We have to encode that string to be URL safe, so we'll use `Space%20Invaders%20HTML5` (The space character needs to be encoded to `%20`).
+For the `q` key, we want the search query.   For our testing we'll use `treasure island`.  We have to encode that string to be URL safe, so we'll use `treasure%20island (The space character needs to be encoded to `%20`).
 
-	https://api.github.com/search/repositories?q=Space%20Invaders%20HTML5
-
-Sorting by best match makes sense, so we'll leave the `sort` key alone.  Descending order also seems fine, so we can leave the `order` key alone as well.
-
-Github also provides search qualifiers, which can be added on to the `q` value.  It makes sense to limit our results to JavaScript projects, given that we're searching for HTML5 projects:
-
-	https://api.github.com/search/repositories?q=Space%20Invaders%20HTML5+language:JavaScript
+	https://www.googleapis.com/books/v1/volumes?q=treasure%20island
 
 If you put that URL into your browser, you should see the JSON response!
 
@@ -1701,19 +1682,19 @@ Change directory into your *working directory*, or the directory where `app.py` 
 Type the following command:
 
 ```bash
-$ curl https://api.github.com/search/repositories?q=Space%20Invaders%20HTML5+language:JavaScript
+$ curl https://www.googleapis.com/books/v1/volumes?q=treasure%20island
 ```
 
 You should see the entire JSON response (probably pretty long!) print to the console.  Now lets write that response to a file:
 
 ```bash
-$ curl https://api.github.com/search/repositories?q=Space%20Invaders%20HTML5+language:JavaScript > response.json
+$ curl https://www.googleapis.com/books/v1/volumes?q=treasure%20island > response.json
 ```
 
 > The `> response.json` section redirects all the output that would normally be sent to the console into the `response.json` file.
 
 You should now have a new file in your current directory named `response.json`.  If you open that file in your text editor, you'll see the response!
-
+r
 <a id="using-python"></a>
 ### 3.2.3 Using Python
 
@@ -1728,10 +1709,10 @@ Don't forget to update your `requirements.txt` file to reflect this change!
 Create a new python file:
 
 ```bash
-$ touch github.py
+$ touch books.py
 ```
 
-Editing `github.py`, start by importing requests.
+Editing `books.py`, start by importing requests.
 
 ```python
 import requests
@@ -1742,7 +1723,7 @@ Now all we need to to is call `requests.get()` on the API url we developed in [s
 ```python
 import requests
 
-url = "https://api.github.com/search/repositories?q=Space%20Invaders%20HTML5+language:JavaScript"
+url = "https://www.googleapis.com/books/v1/volumes?q=treasure%20island"
 response = requests.get(url)
 
 print response
@@ -1751,7 +1732,7 @@ print response
 If you run this script, you should just see the Response object, represented by it's status code (hopefully `200`, or "OK").
 
 ```bash
-$ python github.py
+$ python books.py
 <Response [200]>
 ```
 The only other thing we need is to get usable data is to convert the response object into a Python dictionary, using the Response object's `.json()` method.  To show that it worked, print it to stdout.
@@ -1759,7 +1740,7 @@ The only other thing we need is to get usable data is to convert the response ob
 ```python
 import requests
 
-url = "https://api.github.com/search/repositories?q=Space%20Invaders%20HTML5+language:JavaScript"
+url = "https://www.googleapis.com/books/v1/volumes?q=treasure%20island"
 response = requests.get(url)
 response_dict = response.json()
 
@@ -1779,7 +1760,7 @@ This gives us, again a very large dictionary, printed to the screen.
 
 Adapting our Python code to work in our search route will be pretty simple, but there are a few constraints:
 
--	We want to search Github for the search query that the client sends, not our test string "Space Invaders HTML5"
+-	We want to search Google Books for the search query that the client sends, not our test string "treasure island"
 -	We need to return valid HTML in our route, not a Python dictionary or a Response object.
 
 Addressing the first issue is simple.  We'll let the `url` string be the base search URL concatenated with the `search_query` variable. Don't forget to import `requests`!
@@ -1790,7 +1771,7 @@ import requests
 ...
 @app.route("/search/<search_query>")
 def search(search_query):
-  url = "https://api.github.com/search/repositories?q=" + search_query
+  url = "https://www.googleapis.com/books/v1/volumes?q=" + search_query
 ...
 ```
 
@@ -1808,40 +1789,34 @@ import requests
 ...
 @app.route("/search/<search_query>")
 def search(search_query):
-  url = "https://api.github.com/search/repositories?q=" + search_query
+  url = "https://www.googleapis.com/books/v1/volumes?q=" + search_query
   response_dict = requests.get(url).json()
   return jsonify(response_dict)
 ...
 ```
 
-With your Flask server running, navigate to `localhost:5000/search/Space%20Invaders%20HTML5` and see all the results right in your browser (full circle!).
+With your Flask server running, navigate to `localhost:5000/search/treasure%20island"` and see all the results right in your browser (full circle!).
 
-Try changing what comes after the `/search/` and see the results change.  Note that Github limits us to five requests per minute because of their [rate limiting][github-rate-limiting], but we will increase that number when we implement Authentication in [section 2.3](#authentication).
+Try changing what comes after the `/search/` and see the results change.
 
 <a id="parsing-json"></a>
 ### 3.2.5 Extension: Parsing JSON
 
-The JSON response that Github sends us is extremely long, and full of URLs that we don't need for our app.  We can't do anything about what they send us, but we it would be good practice to minimize the amount of data being sent to the client.
+The JSON response that Google Books sends us is extremely long, and full of URLs that we don't need for our app.  We can't do anything about what they send us, but we it would be good practice to minimize the amount of data being sent to the client.
 
-All we real need from each repo item in the `items` array is:
+All we really need from each repo item in the `items` array is:
 
--	`name`,
--	`owner` (with `login`, `avatar_url`, and `html_url`),
--	`html_url`, and
--	`description`
+-	`selfLink`,
+-	`volumeInfo` (with `title` and `authors`),
 
-We should also keep the `total_count` key-value pair.
-
-> Have you noticed that the `total_count` is higher than the size of the `items` array?  That's because there are actually more results that are returned, but Github *paginates* their results, offering 30 results at a time by default to reduce the amount of data being sent per-request.  You can access all the results by passing in some extra information in the query string of the request, a process which is detailed in the ["pagination" section][github-api-docs-pagination] of the Github API documentation.
-
-With just this data we can display an attractive list of the Github repos for the user's search query in [section 3.2](#templating-in-flask).
+We should also keep the `totalItems` key-value pair.
 
 Write a function called `parse_response()` that takes in `response_dict` and returns a cleaned up dictionary that maintains the structure of `response_dict` but only has the keys enumerated above.  Pass `response_dict` through this function before calling `jsonify()` on it.  When you run your program, you should see a cleaner JSON output.
 
 <a id="using-javascript"></a>
 ### 3.2.6 Extension: Using JavaScript
 
-*If you're familiar with JavaScript and would prefer to interact with the GitHub API using JavaScript, we'll go over how
+*If you're familiar with JavaScript and would prefer to interact with the Google Books API using JavaScript, we'll go over how
 to do that in this section. If you don't know JavaScript, feel free to skip it.*
 
 Vanilla JavaScript has a way to interact with external APIs, but [jQuery](http://jquery.com/), a library of common
@@ -1864,12 +1839,12 @@ JavaScript can use to fetch new data without loading a new page (it's how your G
 without you refreshing the page). Create another file called `script.js` with the following lines:
 
 ```javascript
-$.getJSON("https://api.github.com/search/repositories?q=Space%20Invaders%20HTML5+language:JavaScript&callback=?", function(data) {
+$.getJSON("https://www.googleapis.com/books/v1/volumes?q=treasure%20island", function(data) {
 	console.log(data);
 });
 ```
 
-Here (as before), we fetch all repositories that match the string "Space Invaders" and are written in JavaScript; we
+Here (as before), we fetch all books that match the string "treasure island" and are written in JavaScript; we
 then print it out to the JavaScript console (which can be accessed in the "Developer Tools" for Firefox (`Ctrl-Shift-K`)
 or Chrome (`Ctrl-Shift-J`) (or `Cmd` for OS X).
 
@@ -1886,7 +1861,7 @@ A couple of gotchas here:
   executes the next statement. We tell JavaScript what we want it to do once it's finished loading the data; that's the
   body of the function we pass to `getJSON`.
 
-That's it! You've successfully queried GitHub's API using JavaScript and jQuery.
+That's it! You've successfully queried the Google Books API using JavaScript and jQuery.
 
 
 <a href="#top" class="top" id="level4">Top</a>
