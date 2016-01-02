@@ -37,7 +37,7 @@ Basic knowledge of the Python programming language is suggested. If you don't al
 		-	[1.4.1 What is HTML](#what-is-HTML)
 		-	[1.4.2 Anatomy of an HTML Document](#anatomy-of-an-html-document)
 		-	[1.4.3 An Overview of Common Tags](#an-overview-of-common-tags)
-		-	[1.4.4 A Simple Example: hello.html](#a-simple-example-hello-html)
+		-	[1.4.4 The Landing Page](#a-simple-example-hello-html)
 		-	[1.4.5 The Search Page](#the-search-page)
 -	[Level 2: Styling our App: CSS](#level2)
 	-	[2.1 CSS Basics](#css-basics)
@@ -47,7 +47,7 @@ Basic knowledge of the Python programming language is suggested. If you don't al
 	-	[2.2 External Libraries](#external-libraries)
 		-	[2.2.1 Using Foundation](#using-foundation)
 		-	[2.2.2 Installation and Template Setup](#installation-and-template-setup)
-		-	[2.2.3 Adding CSS to our Project](#adding-css-to-our-project)
+	-	[2.3 Adding CSS to our Project](#adding-css-to-our-project)
 -	[Level 3: Adding Search Functionality: APIs](#level3)
 	-	[3.1 API Basics](#api-basics)
 		-	[3.1.1 REST APIs](#rest-apis)
@@ -1218,7 +1218,7 @@ On the bottom of the "Getting Started With Foundation CSS" page, Zurb includes a
 </html>
 ```
 
-Apply Foundation's boilerplate code (above) to `search.html` while preserving the content.
+Apply Foundation's boilerplate code (above) to `hello.html` while preserving the content.
 
 
 ```html
@@ -1226,25 +1226,22 @@ Apply Foundation's boilerplate code (above) to `search.html` while preserving th
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<title>Search</title>
-  		<link rel="stylesheet" href="static/css/foundation.css">
+		<title>Reading List App</title>
+		<link rel="stylesheet" href="static/css/foundation.css">
   		<link rel="stylesheet" href="static/css/normalize.css">
   		<link rel="stylesheet" href="static/css/app.css">
   		<script src="static/js/modernizr.js"></script> 
 	</head>
 	<body>
-		<h1>Search</h1>
-        <form action="/search" method="post">
-            <input type="text" placeholder="Search for your idea" name="user_search" required/>
-            <button type="submit">Search</button>
-        </form>
-
-		<script src="static/js/jquery.js"></script>
-		<script src="static/js/foundation.min.js"></script>
-		<script> 
-    		$(document).foundation(); 
-  		</script> 
+		<h1>Reading List App</h1>
+		<p>This web app allows users to search for books and add them to their reading lists!</p>
+		<a href="/search"><button class="launch-button">Launch App</button></a>	
 	</body>
+	<script src="static/js/jquery.js"></script>
+	<script src="static/js/foundation.min.js"></script>
+	<script> 
+    	$(document).foundation(); 
+  	</script> 
 </html>
 ```
 
@@ -1260,14 +1257,83 @@ Note that we also link to `css/app.css`, which is for CSS code specific to our a
 
 Now that you've learned the basics of CSS and Foundation, let's add some styling to our landing page!
 
-# CONTENT
+
+Let's first use foundation to add some structure to the content! Modify `hello.html` to wrap the body's content in the `row`, `large-12 columns`, and `panel` classes.
+
+```html
+...
+<body>
+	<div class="row">
+		<div class="large-12 columns">
+			<div class="panel">
+				<h1>Reading List App</h1>
+				<p>This web app allows users to search for books and add them to their reading lists!</p>
+				<a href="/search"><button class="launch-button">Launch App</button></a>
+			</div>
+		</div>
+	</div>
+</body>
+...
+``` 
+
+Now let's write some CSS in `app.css` to further customize our landing page. Let's add a themed background image to our app! Add the following lines to `app.css`.
+
+```css
+body, html {
+	height: 100%;
+	width: 100%;
+}
+
+body {
+	background: black url(https://images.unsplash.com/reserve/fvD9myEgRued3zLne2GS__DSC0033-1.jpg?crop=entropy&fit=crop&fm=jpg&h=725&ixjsv=2.1.0&ixlib=rb-0.3.5&q=80&w=1450) no-repeat fixed center center;
+}
+```
+
+See what the landing page looks like by visiting `localhost:5000` in your browser. Make sure the background image appears.
+
+Let's fix the styling of our text so that it stands out from the background. Add the following lines to `app.css`.
+
+```css
+.panel {
+	margin-top: 80px;
+	text-align: center;
+	background-color: rgba(242, 242, 242, 0.9);
+	padding: 15px 0px 70px 0px;
+}
+
+.panel h1 {
+	font-size: 3rem;
+}
+
+.panel p {
+	font-size: 1.3rem;
+	padding: 20px 0px;
+}
+```
+
+Lastly, let's make our button more interesting! Add the following lines to `app.css`.
+
+```css
+button {
+	background-color: #FF9900;
+	margin-top: 25px;
+	padding: 30px;
+	color: #EEEEEE;
+	font-size: 1.5rem;
+	font-weight: 500;
+}
+
+button:hover {
+	background-color: #D77E22;
+}
+```
+
+Now we have a basic landing page styled using CSS and foundation. We will style the rest of our app after we finish implementing its functionality.
+
+![The Styled Landing Page](images/2.3.png)
 
 
-
-
-
-
-<a href="#top" class="top" id="level4">Top</a>
+<a href="#top" class="top" id="level3">Top</a>
 ## Level 3: APIs
 
 
@@ -1823,12 +1889,12 @@ A couple of gotchas here:
 That's it! You've successfully queried GitHub's API using JavaScript and jQuery.
 
 
+<a href="#top" class="top" id="level4">Top</a>
+## Level 4: Databases
+
+
 <a href="#top" class="top" id="level5">Top</a>
-## Level 5: Databases
-
-
-<a href="#top" class="top" id="level6">Top</a>
-## Level 6: User Sessions
+## Level 5: User Sessions
 
 
 <a href="#top" class="top" id="additionalresources">Top</a>
