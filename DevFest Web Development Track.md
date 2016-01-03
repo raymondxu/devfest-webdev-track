@@ -525,7 +525,7 @@ def hello():
 Reload the server and visit `localhost:5000`.  You'll see `hello.html`, but this time rendered by Flask!
 
 <a id="the-search-page"></a>
-### 1.4.2 The Search Page
+### 1.4.5 The Search Page
 
 Now let's write the web page where users can search for books!
 
@@ -1385,13 +1385,14 @@ From here out we will be using some increasingly complex [URLs][urls], and it is
 
 	https://www.googleapis.com/books/v1/volumes?q=Treasure
 
-This URL breaks up into five parts:
+This URL breaks up into six parts:
 
 1.	The protocol (`https`): We are using the [HTTPS][https] protocol, which is a secure version of HTTP, detailed in [section 2.1.5](#http).
 2.	The separator (`://`): A colon and two slashes always follow the protocol and are used to separate the protocol and the host.
-3.	The host (`\(www.\) ??? googleapis.com`): A host is usually a domain name (this is the case for our url), but it could also be an IP Address.
-4.	The path (`/books/v1/volumes`): Everything from the first `/` up to the `?` that starts the query string is the path. When accessing a web page, often these paths will be hierarchical and include a filename at the end, like `/blog/2014/02/post.html`.  When making API calls, these paths are the API method that is being called.  Here, we are searching books.
-5.	The query string (`q=Treasure`): is af key-value pair of the form `<key>=<value>`. The query string starts with a `?` and have have multiple key-value pairs that are separated by `&`. The key value pairs here are:
+3.	The subdomain (`www.`): Not always required.
+4.	The host (`googleapis.com`): A host is usually a domain name (this is the case for our url), but it could also be an IP Address.
+5.	The path (`/books/v1/volumes`): Everything from the first `/` up to the `?` that starts the query string is the path. When accessing a web page, often these paths will be hierarchical and include a filename at the end, like `/blog/2014/02/post.html`.  When making API calls, these paths are the API method that is being called.  Here, we are searching books.
+6.	The query string (`q=Treasure`): is af key-value pair of the form `<key>=<value>`. The query string starts with a `?` and have have multiple key-value pairs that are separated by `&`. The key value pairs here are:
 
 
 > This URL schema is by no means complete; it encompasses the parts of a URL that are most relevant to API programming.  For a more complete view, check out [this blog post][url-google] by Google's Matt Cutts, or this exhaustive [Wikipedia entry][url-wikipedia].
