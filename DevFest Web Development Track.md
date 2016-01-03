@@ -62,7 +62,7 @@ Basic knowledge of the Python programming language is suggested. If you don't al
 		-	[3.2.4 Using Flask: Extending the Search Route](#using-flask-extending-the-search-route)
 		-	[3.2.5 Extension: Parsing JSON](#parsing-json)
 		-	[3.2.6 Extension: Using JavaScript](#using-javascript)
-	-	[3.3 Templating in Flask](#templating-in-flask)
+	-	[3.3 Displaying Search Results](#displaying-search-results)
 		-	[3.3.1 Template Variables Using Jinja2](#template-variables-using-jinja2)
 		-	[3.3.2 Extending Templates](#extending-templates)
 -	[Level 4: Storing Data: Databases](#level4)
@@ -114,10 +114,10 @@ This is a very basic directory structure for a Flask webapp.
 -	`app.py` - All of the Python/Flask code and server logic gets written in this file.
 -	`requirements.txt` - A list of all of the dependencies for your project.  See more about dependencies and installing them in [section 6.3 of our Python tutorial](http://adicu.com/intro-webdev/python/#pip).
 -	`static/` - This folder holds all your static files.  Static files include:
-	-	`js/` - Javascript files, which allow interactive web content. We'll talk about these [later](#installation-and-template-setup).
-	-	`css/` - CSS files, which style our app.  We'll talk about these [later](#css) too.
+	-	`js/` - Javascript files, which allow interactive web content. We'll talk about these [later](#using-javascript).
+	-	`css/` - CSS files, which style our app.  We'll talk about these [later](#level2) too.
 	-	`img/` - Image files.
--	`templates/` - This folder holds all your Flask templates.  Our HTML files will go here.  There are special features offered by Flask that make templates different than basic HTML files, explored in [Section 3.3](#templating-in-flask).
+-	`templates/` - This folder holds all your Flask templates.  Our HTML files will go here.  There are special features offered by Flask that make templates different than basic HTML files, explored in [Section 3.3](#displaying-search-results).
 
 <a href="#top" class="top" id="hello-world-in-flask">Top</a>
 ## 1.2 Hello World in Flask
@@ -502,7 +502,7 @@ Let's turn `hello.html` into the landing page for our app!
 </html>
 ```
 
-Flask uses something called templates to make writing HTML more modular. We will go in-depth on templating in a later section, but let's set up a simple HTML page here. Let's make our Flask app return `hello.html` as a template.  First,  move `hello.html` into the `templates` folder.  Then, in `app.py`, import `render_template` from the `flask` package:
+Flask uses something called templates to make writing HTML more modular. We will go in-depth on templating in [a later section](#displaying-search-results), but let's set up a simple HTML page here. Let's make our Flask app return `hello.html` as a template.  First,  move `hello.html` into the `templates` folder.  Then, in `app.py`, import `render_template` from the `flask` package:
 
 ```python
 from flask import Flask, jsonify, render_template
@@ -640,7 +640,7 @@ Now that we have a basic landing page, let's add some styling to it so it doesn'
 <a href="#top" class="top" id="css-basics">Top</a>
 ## 2.1 CSS Basics
 
-CSS is a very simple language.  At it's core, CSS is made up of three parts: *selectors*, *properties*, and *values*.  Selectors (explored in depth in [section 4.1.2](#advanced-selectors)) are used to select which elements are being styled.  For example:
+CSS is a very simple language.  At it's core, CSS is made up of three parts: *selectors*, *properties*, and *values*.  Selectors are used to select which elements are being styled.  For example:
 
 ```css
 p { }
@@ -1276,7 +1276,7 @@ Let's first use Foundation to add some structure to the content! Modify `hello.h
 ...
 ``` 
 
-Now let's write some CSS in `app.css` to further customize our landing page. Let's add a themed background image to our app! Add the following lines to `app.css`.
+Now let's write some CSS in `app.css` to further customize our landing page. We will start by adding a themed background image to our app! Add the following lines to `app.css`.
 
 ```css
 body, html {
@@ -1289,9 +1289,9 @@ body {
 }
 ```
 
-See what the landing page looks like by visiting `localhost:5000` in your browser. Make sure the background image appears.
+See what the landing page looks like by visiting `localhost:5000`. Make sure the background image appears.
 
-Let's fix the styling of our text so that it stands out from the background. Add the following lines to `app.css`.
+Let's fix the styling of our text so that it stands out from the background image. Add the following lines to `app.css`.
 
 ```css
 .panel {
@@ -1311,7 +1311,7 @@ Let's fix the styling of our text so that it stands out from the background. Add
 }
 ```
 
-Lastly, let's make our buttons more interesting! Add the following lines to `app.css`.
+Lastly, let's make our buttons more interesting. Add the following lines to `app.css`.
 
 ```css
 button {
@@ -1335,7 +1335,7 @@ button:hover {
 }
 ```
 
-Now that we've defined the `launch-button` and `search-button` classes, add them into the HTML! In `hello.html`:
+Now that we've defined the `launch-button` and `search-button` classes, use them the HTML! In `hello.html`:
 
 ```html
 ...
@@ -1351,7 +1351,7 @@ And in `search.html`:
 ...
 ```
 
-Now we have a basic landing page styled using CSS and foundation. We will style the rest of our app after we finish implementing its functionality.
+Great! Now we have a basic landing page styled using CSS and foundation. We will style the rest of our app after we finish implementing its functionality.
 
 
 <a href="#top" class="top" id="level3">Top</a>
@@ -1775,9 +1775,9 @@ This gives us, again a very large dictionary, printed to the screen.
 
 > Try exploring the dictionary!  JSON has analogous structures in Python: objects become dictionaries, arrays become lists, and everything else converts as you expected.  For example, if you modify the print statement like so:
 >
->	   print response_dict["items"][0]["language"]
+>	   print response_dict["items"][0]["volumeInfo"]["title"]
 >
-> You should see it print "JavaScript", the language of the first repository returned from the API call.
+> You should see it print the title of the first book in the search results.
 
 <a id="using-flask-extending-the-search-route"></a>
 ### 3.2.4 Using Flask: Extending the Search Route
@@ -1831,7 +1831,7 @@ The JSON response that Google Books sends us is extremely long, and full of URLs
 All we really need from each book item in the `items` array is:
 
 -	`volumeInfo` (for `title` and `authors`),
--	`accessInfo (for `webReaderLink`)
+-	`accessInfo` (for `webReaderLink`)
 
 We should also keep the `totalItems` key-value pair.
 
@@ -1889,7 +1889,7 @@ That's it! You've successfully queried the Google Books API using JavaScript and
 
 
 <a id="displaying-search-results"></a>
-### 3.3 Displaying Search Results
+## 3.3 Displaying Search Results
 
 Now that we have JSON data, let's display the relevant books on a results page.
 
@@ -1974,6 +1974,7 @@ Now lets populate the dynamic list item.  We can insert variables into Flask usi
 	</li>
 {% endfor %}
 </ul>
+...
 ```
 
 Now, visit `localhost:5000/search` again and submit a search. You should see a bulleted list of results for your search!
@@ -1997,7 +1998,7 @@ Our results page looks great, but what if we want to do another search?  Let's p
 	<body>
 		<h1>Search</h1>
 		<form action="/search" method="POST">
-			<input type="text" placeholder="Search for your idea" id="user_search" name="user_search" required/>
+			<input type="text" placeholder="Search for a book" id="user_search" name="user_search" required/>
 			<button type="submit">Search</button>
 		</form>
 		<ul>
