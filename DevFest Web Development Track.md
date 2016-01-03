@@ -63,7 +63,7 @@ Basic knowledge of the Python programming language is suggested. If you don't al
 		-	[3.2.5 Extension: Parsing JSON](#parsing-json)
 		-	[3.2.6 Extension: Using JavaScript](#using-javascript)
 	-	[3.3 Templating in Flask](#templating-in-flask)
-		-	[3.3.1 Template Variables](#template-variables-using-jinja2)
+		-	[3.3.1 Template Variables Using Jinja2](#template-variables-using-jinja2)
 		-	[3.3.2 Extending Templates](#extending-templates)
 -	[Level 4: Storing Data: Databases](#level4)
 -	[Level 5: User Sessions](#level5)
@@ -569,7 +569,7 @@ Next we'll add an `<input>` method with `type` attribute equal to `text`, in ord
 ```html
 ...
 <form action="/search" method="post">
-	<input type="text" placeholder="Search for your idea" name="user_search" required/>
+	<input type="text" placeholder="Search for a book" name="user_search" required/>
 </form>
 ...
 ```
@@ -579,7 +579,7 @@ Then we'll add a search `<button>`:
 ```html
 ...
 <form action="/search" method="post">
-	<input type="text" placeholder="Search for your idea" name="user_search" required/>
+	<input type="text" placeholder="Search for a book" name="user_search" required/>
 	<button type="submit">Search</button>
 </form>
 ...
@@ -597,7 +597,7 @@ Now we have our completed `search.html`:
 	<body>
 		<h1>Search</h1>
 		<form action="/search" method="post">
-			<input type="text" placeholder="Search for your idea" name="user_search" required/>
+			<input type="text" placeholder="Search for a book" name="user_search" required/>
 			<button type="submit">Search</button>
 		</form>
 	</body>
@@ -1828,10 +1828,10 @@ Try changing what comes after the `/search/` and see the results change.
 
 The JSON response that Google Books sends us is extremely long, and full of URLs that we don't need for our app.  We can't do anything about what they send us, but we it would be good practice to minimize the amount of data being sent to the client.
 
-All we really need from each repo item in the `items` array is:
+All we really need from each book item in the `items` array is:
 
--	`selfLink`,
--	`volumeInfo` (with `title` and `authors`),
+-	`volumeInfo` (for `title` and `authors`),
+-	`accessInfo (for `webReaderLink`)
 
 We should also keep the `totalItems` key-value pair.
 
@@ -1886,6 +1886,227 @@ A couple of gotchas here:
   body of the function we pass to `getJSON`.
 
 That's it! You've successfully queried the Google Books API using JavaScript and jQuery.
+
+
+<a id="displaying-search-results"></a>
+### 3.3 Displaying Search Results
+
+Now that we have JSON data, let's display the relevant books on a results page.
+
+<a id="template-variables-using-jinja2"></a>
+### 3.3.1 Template Variables Using Jinja2
+
+Now displaying data as JSON is all well and good, but it would be great to display the content as HTML.  The problem is, we can't know at the point of writing our HTML what the response will be, so we'll use the more advanced templating features of Flask to dynamically create HTML.
+
+We'll be using the [Jinja2 templating engine][jinja2] built into Flask. Using it, we can pass variables from our Python code into templates, essentially allowing us to incorporate variables in our HTML.
+
+First, create a boilerplate HTML5 document called `results.html`:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Results</title>
+	</head>
+	<body>
+		
+	</body>
+</html>
+```
+
+Before we can start designing our template, we have to actually pass the variable into the template.  We do this in the `render_template()` function, where ([as the documentation indicates][render-template]) we can pass variables as keyword arguments.  We can also remove our import for jsonify, as we are no longer using it.  Edit `app.py`:
+
+```python
+from flask import Flask, render_template, request
+import requests
+...
+		response_dict = requests.get(url).json()
+		return render_template("results.html", api_data=response_dict)
+...
+```
+
+> Here the variable `api_data` has an arbitrary name chosen to be used from within the template.  Inside the template, we will refer the the data as `api_data`, not `response_dict`.  Often these two names will be the same, i.e. `response_dict=response_dict`, but we'll leave them different for clarity.
+
+We've passed our data into the HTML document, so now we'll turn `results.html` into a dynamic template.  As a concept, lets have an unordered list of all the results, where each item represents a book with its title, authors, and link. 
+
+First, create an unordered list for the results.
+
+```html
+...
+<body>
+	<ul>
+	</ul>
+</body>
+...
+```
+
+Next, we'll iterate over all of the repositories in the `items` list using Jinja2's [for loop syntax][jinja2-for], making a list item for each one.  We know to do this because of the JSON response structure we saw in section [3.1.4](#viewing-json-in-the-browser).  When `render_template()` is called on this template, Flask will replace the for loop with mulitple instances of whatever is inside the `{%%}` tags.  
+
+In general, Jinja2 code that contains `{%%}` is for control flow, and will not be displayed literally on the web page.
+
+```html
+...
+<body>
+	<ul>
+	{% for book in api_data["items"] %}
+		<li></li>
+	{% endfor %}
+	</ul>
+</body>
+...
+```
+
+Now lets populate the dynamic list item.  We can insert variables into Flask using the `{{ variable }}` syntax.
+
+
+```html
+...
+<ul>
+{% for book in api_data["items"] %}
+	<li>
+		<a href={{ book.accessInfo.webReaderLink }}><h3>{{ book.volumeInfo.title }}</h3></a>
+		<h4>
+			{% for author in book.volumeInfo.authors %}
+				<ul>{{ author }}</ul>
+			{% endfor %}
+		</h4>
+	</li>
+{% endfor %}
+</ul>
+```
+
+Now, visit `localhost:5000/search` again and submit a search. You should see a bulleted list of results for your search!
+
+
+`<a href={{ book.accessInfo.webReaderLink }}><h3>{{ book.volumeInfo.title }}</h3></a>` makes the title of each book a link to its Google Books page. Notice that we also have an inner for loop because there can be multiple authors for any given book.
+
+
+<a id="extending-templates"></a>
+### 3.3.2 Extending Templates
+
+Our results page looks great, but what if we want to do another search?  Let's put the search form and header at the top of `results.html` as well.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Results</title>
+	</head>
+	<body>
+		<h1>Search</h1>
+		<form action="/search" method="POST">
+			<input type="text" placeholder="Search for your idea" id="user_search" name="user_search" required/>
+			<button type="submit">Search</button>
+		</form>
+		<ul>
+			{% for book in api_data["items"] %}
+				<li>
+					<a href={{ book.accessInfo.webReaderLink }}><h3>{{ book.volumeInfo.title }}</h3></a>
+					<h4>
+						{% for author in book.volumeInfo.authors %}
+							<ul>{{ author }}</ul>
+						{% endfor %}
+					</h4>
+				</li>
+			{% endfor %}
+		</ul>
+	</body>
+</html>
+```
+
+Noticing a lot of repeated code? You should.  `search.html` and `results.html` look very similar, and it would be great if we didn't have to reuse code.  
+
+We can use *template inheritance* to reuse one template with another.  It's easy!  The *parent template* will be `search.html`, because it is more simple, and all of the code from it shows up in `results.html`.  In `search.html`, add a [Jinja2 block][jinja2-block] that the child (`results.html`) will fill in:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Search</title>
+	</head>
+	<body>
+		<h1>Search</h1>
+		<form action="/search" method="POST">
+			<input type="text" placeholder="Search for a book" id="user_search" name="user_search" required/>
+			<button type="submit">Search</button>
+		</form>
+		{% block results %}{% endblock %}
+	</body>
+</html>
+```
+
+Next, we'll make `results.html` *extend*, or be a child of `search.html`.  To do this, add the following line at the beginning of `results.html`:
+
+```html
+{% extends search.html %}
+<!DOCTYPE html>
+```
+
+Now, we can delete everything that is in `search.html` from `results.html`, and just include the contents of our `{% block %}`.  Edit `results.html`:
+
+```html
+{% extends "search.html" %}
+{% block results %}
+<ul>
+{% for book in api_data["items"] %}
+	<li>
+		<a href={{ book.accessInfo.webReaderLink }}><h3>{{ book.volumeInfo.title }}</h3></a>
+		<h4>
+			{% for author in book.volumeInfo.authors %}
+				<ul>{{ author }}</ul>
+			{% endfor %}
+		</h4>
+	</li>
+{% endfor %}
+</ul>
+{% endblock %}
+```
+
+
+And that's it!  When `render_template()` is called on `results.html`, Flask sees that `results.html` extends `search.html`, so it renders `search.html` filling in any `{% block %}`s that were define in `results.html`.  When `search.html` is rendered, the empty `{% block %}` is ignored.  
+
+View it live!  You'll see the form persist into the results page, even though `results.html` doesn't have the form HTML in it.
+
+
+<a id="templating-best-practices"></a>
+### 3.2.5 Extension: Templating Best-Practices
+
+Our `results.html` template works, but there are some corner cases that we'd be good to cover.  We'll be addressing some issues with the user experience of our app.  Figuring out that you have user experience problems can be hard to do, but as a rule of thumb, give your app to a few friends and see what they think after using it.
+
+##### Empty search results
+
+What if there are no results from the search?  The `items` list will be empty, and no `<li>` elements will be rendered.  Lets have a fall back.  Using the `{% if %}` control statement, we can check if the `items` list exists and isn't empty, and display a message indicating a lack of results otherwise.
+
+```html
+{% extends "search.html" %}
+{% block results %}
+{% if api_data["items"] %}
+	<ul>
+	{% for book in api_data["items"] %}
+		<li>
+			<a href={{ book.accessInfo.webReaderLink }}><h3>{{ book.volumeInfo.title }}</h3></a>
+			<h4>
+				{% for author in book.volumeInfo.authors %}
+					<ul>{{ author }}</ul>
+				{% endfor %}
+			</h4>
+		</li>
+	{% endfor %}
+	</ul>
+{% else %}
+<p>There were no books found.</p>
+{% endif %}
+{% endblock %}
+```
+
+##### Missing Data Members
+
+What if a book doesn't have an author listed?  Or the link is missing?  Whenever we use template variables, we should be sure that they exist first, lest the user see some ugly template error instead of your app.
+
+Wrap each `{{ }}` statement in a Jinja2 `{% if %}`, checking if the variable exists before using it.
 
 
 <a href="#top" class="top" id="level4">Top</a>
