@@ -1911,3 +1911,107 @@ Along with this tutorial, there is a wealth of information available on Python a
 [codecademy]: http://www.codecademy.com
 [adi]: http://adicu.com
  
+
+
+
+<!-- python/flask -->
+[flask]: http://flask.pocoo.org/
+[route]: http://flask.pocoo.org/docs/quickstart/#routing
+[decorators]: https://wiki.python.org/moin/PythonDecorators
+[py-requests]: http://docs.python-requests.org/en/latest/
+[py-requests-basic-auth]: http://docs.python-requests.org/en/latest/user/authentication/#basic-authentication
+[pip]: http://www.pip-installer.org/en/latest/
+[py-response-obj]: http://docs.python-requests.org/en/latest/api/#requests.Response
+[flask-jsonify]: http://flask.pocoo.org/docs/api/#flask.json.jsonify
+[multidict]: http://werkzeug.pocoo.org/docs/datastructures/#werkzeug.datastructures.MultiDict
+[render-template]: http://flask.pocoo.org/docs/quickstart/#rendering-templates
+[jinja2]: http://jinja.pocoo.org/docs/templates/
+[jinja2-for]: http://jinja.pocoo.org/docs/templates/#for
+[jinja2-block]: http://jinja.pocoo.org/docs/templates/#template-inheritance
+
+<!-- google books api -->
+[google-books-docs]: https://developers.google.com/books/docs/v1/reference/
+[google-books-docs-volume]: https://developers.google.com/books/docs/v1/reference/volumes
+
+<!-- networking -->
+[port]: http://en.wikipedia.org/wiki/Port_(computer_networking)
+[localhost]: http://en.wikipedia.org/wiki/Localhost
+[client-server]: http://en.wikipedia.org/wiki/Client%E2%80%93server_model
+[dynamic-content]: http://en.wikipedia.org/wiki/Dynamic_content
+[api]: http://en.wikipedia.org/wiki/Api
+[rest-api]: http://en.wikipedia.org/wiki/REST_API
+[open-source]: http://en.wikipedia.org/wiki/Open_source
+[json]: http://en.wikipedia.org/wiki/Json
+[https]: http://en.wikipedia.org/wiki/Https
+[urls]: http://en.wikipedia.org/wiki/Uniform_resource_locator
+[url-google]: http://www.mattcutts.com/blog/seo-glossary-url-definitions/
+[url-wikipedia]: http://en.wikipedia.org/wiki/URI_scheme#Generic_syntax
+[basic-http-auth]: http://en.wikipedia.org/wiki/Basic_access_authentication
+
+<!--HTML-->
+[html]: http://en.wikipedia.org/wiki/HTML/
+[attributes]: http://en.wikipedia.org/wiki/HTML_attribute
+[href-confusion]: http://tomayko.com/writings/wtf-is-an-href-anyway
+[doctype]: http://en.wikipedia.org/wiki/Doctype#HTML5_DTD-less_DOCTYPE
+[mdn]: https://developer.mozilla.org/en-US/
+[mdn-elements]: https://developer.mozilla.org/en-US/docs/Web/HTML/Element
+[mdn-body]: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/body
+[mdn-div]: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/div
+[mdn-head]: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/head
+[mdn-link]: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/link
+[mdn-html]: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/html
+[mdn-span]: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/span
+[mdn-p]: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/p
+[mdn-a]: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a
+[mdn-h1-6]: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/h1
+[mdn-em]: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/em
+[mdn-strong]: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/strong
+[mdn-br]: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/br
+[mdn-ol]: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/ol
+[mdn-ul]: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/ul
+[mdn-li]: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/li
+[mdn-meta]: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meta
+[mdn-DOCTYPE]: https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5/Introduction_to_HTML5#Declaring_that_the_document_contains_HTML5_mark-up_with_the_HTML5_doctype
+[mdn-style]: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/style
+[mdn-title]: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/title
+[mdn-img]: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img
+[mdn-script]: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script
+[mdn-form]: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form
+[mdn-form-usage]: https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Forms/My_first_HTML_form?redirectlocale=en-US&redirectslug=HTML%2FForms%2FMy_first_HTML_form
+[mdn-input]: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input
+[mdn-label]: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/label
+[mdn-textarea]: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/textarea
+[mdn-button]: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button
+[seo]: https://en.wikipedia.org/wiki/Search_engine_optimization
+
+<!-- CSS -->
+[css]: http://en.wikipedia.org/wiki/Css
+[htmldog]: http://htmldog.com
+[htmldog-css]: http://htmldog.com/guides/css/
+[mdn-colors]: https://developer.mozilla.org/en-US/docs/Web/CSS/color_value
+[mdn-length]: https://developer.mozilla.org/en-US/docs/Web/CSS/length
+[mdn-box-model]: https://developer.mozilla.org/en-US/docs/Web/CSS/box_model
+[medium-bootstrap-vs-foundation]: https://medium.com/frontend-and-beyond/8b3812c7007c
+[bootstrap]: http://getbootstrap.com/getting-started/
+[foundation]: http://foundation.zurb.com
+[foundation-docs]: http://foundation.zurb.com/docs/css.html
+[foundation-html]: http://foundation.zurb.com/docs/css.html#html-page-markup
+[foundation-grid]: http://foundation.zurb.com/docs/components/grid.html
+[mdn-background]: https://developer.mozilla.org/en-US/docs/Web/CSS/background
+[foundation-download]: http://foundation.zurb.com/docs/css.html
+[foundation-forms]: http://foundation.zurb.com/docs/components/forms.html
+[foundation-lists]: http://foundation.zurb.com/docs/components/typography.html#lists
+[foundation-small]: http://foundation.zurb.com/docs/components/typography.html#small-header-segments
+
+<!-- tools -->
+[curl-win]: http://curl.haxx.se/download.html
+[curl]: http://curl.haxx.se/docs/manpage.html
+[json-chrome]: https://chrome.google.com/webstore/detail/jsonview/chklaanhfefbnpoihckbnefhakgolnmc?hl=en
+[json-firefox]: https://addons.mozilla.org/en-us/firefox/addon/jsonview/
+[json-safari]: https://github.com/rfletcher/safari-json-formatter
+[inspect-ff]: https://developer.mozilla.org/en-US/docs/Tools/Page_Inspector
+[inspect-chrome]: https://developers.google.com/chrome-developer-tools/
+[inspect-safari]: https://developer.apple.com/library/mac/documentation/AppleApplications/Conceptual/Safari_Developer_Guide/GettingStarted/GettingStarted.html
+
+<!-- Other resources -->
+[learn]: http://adicu.com/learn
