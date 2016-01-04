@@ -22,7 +22,7 @@ Basic knowledge of the Python programming language is suggested. If you don't al
 ## Table of Contents
 
 -	[Level 0: Environment Setup](#level0)
--	[Level 1: Making the Web Pages: Flask and HTML](#level1)
+-	[Level 1: Making Web Pages: Flask and HTML](#level1)
 	-	[1.1 What is Flask](#what-is-flask)
 		-	[1.1.1 How a Flask App Works](#how-a-flask-app-works)
 		-	[1.1.2 The Anatomy of a Flask App](#the-anatomy-of-a-flask-app)
@@ -78,7 +78,7 @@ Before we get started, set up your environment using [this guide](http://learn.a
 
 
 <a href="#top" class="top" id="level1">Top</a>
-## Level 1: Flask and HTML
+## Level 1: Making Web Pages: Flask and HTML
 
 Let's begin by creating the web page for our reading list app. Before we do so, we need to learn about Flask.
 
@@ -460,7 +460,7 @@ Except the `<DOCTYPE>` tag, all of these elements should be children of the `<he
 
 -   `<DOCTYPE>` [(MDN)][mdn-DOCTYPE] - The declaration of the document type.
 -   `<meta>` [(MDN)][mdn-meta] - Provides extra information about the document.  The `<meta`> tag may serve a bunch of different purposes depending on its attributes.
--   `<link>` [(MDN)][mdn-link] - Linking this document to an external resource.  For the most part, the `<link>` tag is only used for linking to an external CSS file.  We'll learn more about this syntax in [section 4.1](#css-basics).  Be sure to always include the `href`, `rel`, `type`, and `media` attributes, as follows: 
+-   `<link>` [(MDN)][mdn-link] - Linking this document to an external resource.  For the most part, the `<link>` tag is only used for linking to an external CSS file.  We'll learn more about this syntax in [section 2.1](#css-basics).  Be sure to always include the `href`, `rel`, `type`, and `media` attributes, as follows: 
 ```html
 <link href="style.css" rel="stylesheet" type="text/css" media="all">
 ```
@@ -630,7 +630,7 @@ Try it out by going to `localhost:5000` and clicking the button!
 
 
 <a href="#top" class="top" id="level2">Top</a>
-## Level 2: CSS
+## Level 2: Styling our App: CSS
 
 Now that we have a basic landing page, let's add some styling to it so it doesn't look so bland!
 
@@ -912,7 +912,7 @@ p {
 <a id="basic-properties-and-values"></a>
 ### 2.1.3 Basic Properties and Values
 
-Learning CSS, for the most part, is about learning the knitty gritty details.  For an in-depth, comprehensive walkthrough of CSS properties and and how to apply them, check out [HTML Dog][htmldog]'s excellent [CSS tutorial series][htmldog-css]. In [section 4.2](#external-libraries), we will be applying CSS en-masse, using external libraries that provide shortcuts to a stylized webpage.  While using these libraries is good practice, these libraries always need to be accompanied by some extra CSS code for your own website.  For this reason, it's important to understand some basic CSS properties.
+Learning CSS, for the most part, is about learning the knitty gritty details.  For an in-depth, comprehensive walkthrough of CSS properties and and how to apply them, check out [HTML Dog][htmldog]'s excellent [CSS tutorial series][htmldog-css]. In [section 2.2](#external-libraries), we will be applying CSS en-masse, using external libraries that provide shortcuts to a stylized webpage.  While using these libraries is good practice, these libraries always need to be accompanied by some extra CSS code for your own website.  For this reason, it's important to understand some basic CSS properties.
 
 #### Color and Background-Color
 
@@ -1355,13 +1355,13 @@ Great! Now we have a basic landing page styled using CSS and foundation. We will
 
 
 <a href="#top" class="top" id="level3">Top</a>
-## Level 3: APIs
+## Level 3: Adding Search Functionality: APIs
 
 
 <a href="#top" class="top" id="api-basics">Top</a>
 ## 3.1 API Basics
 
-This section will take a step aside from our Flask project to build a foundation of knowledge around APIs and how they are used.  We will return to our app in [section 3.2](#the-google-books-api).
+This section will take a step aside from our Flask project to build a foundation of knowledge around APIs and how they are used.  We will return to our app in [section 3.2](#google-books-api).
 
 <a id="rest-apis"></a>
 ### 3.1.1 REST APIs
@@ -1381,13 +1381,13 @@ The advantage in using a REST API here is that we don't need to remember the URL
 <a id="the-anatomy-of-a-url"></a>
 ### 3.1.2 The Anatomy of a URL
 
-From here out we will be using some increasingly complex [URLs][urls], and it is important to develop a vocabulary for the parts of the url and their purpose.  To do this, we will dissect this url (which we will use in [section 3.2](#the-google-books-api) when we work with the Google Books API):
+From here out we will be using some increasingly complex [URLs][urls], and it is important to develop a vocabulary for the parts of the url and their purpose.  To do this, we will dissect this url (which we will use in [section 3.2](#google-books-api) when we work with the Google Books API):
 
 	https://www.googleapis.com/books/v1/volumes?q=Treasure
 
 This URL breaks up into six parts:
 
-1.	The protocol (`https`): We are using the [HTTPS][https] protocol, which is a secure version of HTTP, detailed in [section 2.1.5](#http).
+1.	The protocol (`https`): We are using the [HTTPS][https] protocol, which is a secure version of HTTP, detailed in [section 3.1.5](#http).
 2.	The separator (`://`): A colon and two slashes always follow the protocol and are used to separate the protocol and the host.
 3.	The subdomain (`www.`): Not always required.
 4.	The host (`googleapis.com`): A host is usually a domain name (this is the case for our url), but it could also be an IP Address.
@@ -1742,7 +1742,7 @@ Editing `books.py`, start by importing requests.
 import requests
 ```
 
-Now all we need to to is call `requests.get()` on the API url we developed in [section 2.2.1](#determining-the-request-url).  This method returns a [Response object][py-response-obj]. Add a print statement to see what the object is.
+Now all we need to to is call `requests.get()` on the API url we developed in [section 3.2.1](#determining-the-request-url).  This method returns a [Response object][py-response-obj]. Add a print statement to see what the object is.
 
 ```python
 import requests
