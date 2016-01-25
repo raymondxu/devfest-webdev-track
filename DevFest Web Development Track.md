@@ -65,6 +65,7 @@ Basic knowledge of the Python programming language is suggested. If you don't al
 	-	[3.3 Displaying Search Results](#displaying-search-results)
 		-	[3.3.1 Template Variables Using Jinja2](#template-variables-using-jinja2)
 		-	[3.3.2 Extending Templates](#extending-templates)
+		-	[3.3.3 Base Templates and Style](#base-templates-and-style)
 -	[Level 4: Storing Data: Databases](#level4)
 -	[Level 5: User Sessions](#level5)
 -   [Additional Resources](#additionalresources)
@@ -604,11 +605,11 @@ Now we have our completed `search.html`:
 </html>
 ```
 
-Right now the button doesn't do anything, but we will add functionality to it in [Level 3](#level3).
+Right now the search button doesn't do anything, but we will add functionality to it in [Level 3](#level3).
 
 Let's connect our landing page (`hello.html`) to our search page (`search.html`).
 
-To do so, we just need to add a button to `hello.html` that links to `search.html`
+To do so, we just need to add a button to `hello.html` that redirects to a `/search` route.
 
 
 ```html
@@ -626,7 +627,16 @@ To do so, we just need to add a button to `hello.html` that links to `search.htm
 </html>
 ```
 
-Try it out by going to `localhost:5000` and clicking the button!
+Now we need to add the search route to `app.py`. Replace the old `/search/<search_query>` route with this:
+
+```python
+@app.route("/search")
+def search():
+	return render_template("search.html")
+```
+
+
+Try it out by going to `localhost:5000` and clicking the "Launch App" button!
 
 
 <a href="#top" class="top" id="level2">Top</a>
@@ -1175,42 +1185,33 @@ Installing Foundation is as easy as 1 2 3.
 
 #### 1. Download
 
-Go to [the Foundation download page][foundation-download] and click the blue "Download Foundation CSS" button.  It will download the latest version of Foundation 5 in a zip file.
+Go to [the Foundation download page][foundation-download] and click the blue "Download Foundation CSS" button.  It will download the latest version of Foundation in a zip file.
 
 #### 2. Integrate
 
-Unzip the file.  Inside, you'll see a couple of files and folders, but the ones we care about are `css` and `js`.  Remember how we have a `css` and `js` folder under the `static` folder of our Flask app?  Copy all the files from `<Download_Directory>/foundation-x.x.x/css` into `<Project_Directory>/static/css` and all the files from `<Download_Directory>/foundation-x.x.x/js` into `<Project_Directory>/static/js`.
+Unzip the file.  Inside, you'll see a couple of files and folders, but the ones we care about are `css` and `js`.  Remember how we have a `css` and `js` folder under the `static` folder of our Flask app?  Copy `foundation.css` from `<Download_Directory>/foundation-x.x.x/css` into `<Project_Directory>/static/css` and `foundation.js` and `vendor` from `<Download_Directory>/foundation-x.x.x/js` into `<Project_Directory>/static/js`.
 
 > Curious what Foundation looks like?  You could poke around the Foundation documentation, or open `index.html` with all the CSS and JS still in the `foundation-x.x.x` folder.  Pretty slick looking!
 
 #### 3. Template
 
-On the bottom of the "Getting Started With Foundation CSS" page, Zurb includes a section called [HTML Page Markup][foundation-html], which has a boilerplate for a basic Foundation app, reproduced here:
+On the Zurb website, they have templates for basic Foundation apps. Here is a basic one that we will use for our project:
 
 ```html
 <!DOCTYPE html> 
-<!--[if IE 9]><html class="lt-ie10" lang="en" > <![endif]--> 
-<html class="no-js" lang="en" > 
-	
+<html lang="en" > 
 <head> 
   <meta charset="utf-8"> 
   <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-  <title>Foundation 5</title> 
-
-  <!-- If you are using CSS version, only link these 2 files, you may add app.css to use for your overrides if you like. --> 
-  <link rel="stylesheet" href="css/normalize.css"> 
+  <title>Foundation</title> 
   <link rel="stylesheet" href="css/foundation.css"> 
-
-  <!-- If you are using the gem version, you need this only --> 
-  <link rel="stylesheet" href="css/app.css"> 
-  <script src="js/vendor/modernizr.js"></script> 
 </head> 
 <body> 
   
   <!-- body content here --> 
 
-  <script src="js/vendor/jquery.js"></script> 
-  <script src="js/foundation.min.js"></script> 
+  <script src="js/vendor/jquery.min.js"></script> 
+  <script src="js/foundation.js"></script> 
   <script> 
   	$(document).foundation(); 
   </script> 
@@ -1218,7 +1219,7 @@ On the bottom of the "Getting Started With Foundation CSS" page, Zurb includes a
 </html>
 ```
 
-Apply Foundation's boilerplate code (above) to `hello.html` while preserving the content.
+Apply the boilerplate code above to `hello.html` while preserving the content:
 
 
 ```html
@@ -1228,17 +1229,15 @@ Apply Foundation's boilerplate code (above) to `hello.html` while preserving the
 		<meta charset="utf-8">
 		<title>Reading List App</title>
 		<link rel="stylesheet" href="static/css/foundation.css">
-  		<link rel="stylesheet" href="static/css/normalize.css">
   		<link rel="stylesheet" href="static/css/app.css">
-  		<script src="static/js/modernizr.js"></script> 
 	</head>
 	<body>
 		<h1>Reading List App</h1>
 		<p>This web app allows users to search for books and add them to their reading lists!</p>
 		<a href="/search"><button class="launch-button">Launch App</button></a>	
 	</body>
-	<script src="static/js/jquery.js"></script>
-	<script src="static/js/foundation.min.js"></script>
+	<script src="static/js/jquery.min.js"></script>
+	<script src="static/js/foundation.js"></script>
 	<script> 
     	$(document).foundation(); 
   	</script> 
@@ -1787,41 +1786,68 @@ Adapting our Python code to work in our search route will be pretty simple, but 
 -	We want to search Google Books for the search query that the client sends, not our test string "Treasure Island"
 -	We need to return valid HTML in our route, not a Python dictionary or a Response object.
 
-Addressing the first issue is simple.  We'll let the `url` string be the base search URL concatenated with the `search_query` variable. Don't forget to import `requests`!
+
+First, ensure that these imports are in your `app.py`.
 
 ```python
-from flask import Flask
-import requests
-...
-@app.route("/search/<search_query>")
-def search(search_query):
-  url = "https://www.googleapis.com/books/v1/volumes?q=" + search_query
-...
-```
-
-Then we know how to make a Response object from that url, but how do we make valid HTML?  Enter Flask's [`jsonify()`][flask-jsonify] method.  First, import it.
-
-```python
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template, request
 import requests
 ...
 ```
 
-`jsonify` takes in a tree of dictionaries and arrays and converts it into JSON text (which is valid HTML).  Make `response_dict`, and return it jsonified.
+Then, modify your search route to handle POST and GET requests:
 
 ```python
 ...
-@app.route("/search/<search_query>")
-def search(search_query):
-  url = "https://www.googleapis.com/books/v1/volumes?q=" + search_query
-  response_dict = requests.get(url).json()
-  return jsonify(response_dict)
+@app.route("/search", methods=["POST", "GET"])
 ...
 ```
 
-With your Flask server running, navigate to `localhost:5000/search/Treasure%20Island"` and see all the results right in your browser (full circle!).
+Now, we can take different actions depending on whether we have a POST request or a GET request.
 
-Try changing what comes after the `/search/` and see the results change.
+
+```python
+...
+@app.route("/search", methods=["POST", "GET"])
+def search():
+	if request.method == "POST":
+		# User has used the search box
+	else: # request.method == "GET"
+		# User is loading the page
+...
+```
+
+We know that when the method is a GET request, we can simply return the search page that we created earlier.
+
+```python
+...
+@app.route("/search", methods=["POST", "GET"])
+def search():
+	if request.method == "POST":
+		# User has used the search box
+	else: # request.method == "GET"
+		return render_template("search.html")
+...
+```
+
+For a POST request, we have to make an API call to the Google Books API and return a page containing the results. First, we use `request.form["user_search"]` to obtain the user query. Then, we use `requests.get(url).json()` to actually send the GET request and receive a json object back. Then, we can pass this data into a results template with Flask. Coming together, this is what it looks like:
+
+```python
+...
+@app.route("/search", methods=["POST", "GET"])
+def search():
+	if request.method == "POST":
+		url = "https://www.googleapis.com/books/v1/volumes?q=" + request.form["user_search"]
+		response_dict = requests.get(url).json()
+		return render_template("results.html", api_data=response_dict)
+	else: # request.method == "GET"
+		return render_template("search.html")
+...
+```
+
+> Here the variable `api_data` has an arbitrary name chosen to be used from within the template.  Inside the template, we will refer the the data as `api_data`, not `response_dict`.  Often these two names will be the same, i.e. `response_dict=response_dict`, but we'll leave them different for clarity.
+
+We haven't written `results.html` yet, so the search functionality still isn't complete. Let's learn how to dynamically populate an HTML page with the data we get back from an API.
 
 <a id="parsing-json"></a>
 ### 3.2.5 Extension: Parsing JSON
@@ -1835,7 +1861,6 @@ All we really need from each book item in the `items` array is:
 
 We should also keep the `totalItems` key-value pair.
 
-Write a function called `parse_response()` that takes in `response_dict` and returns a cleaned up dictionary that maintains the structure of `response_dict` but only has the keys enumerated above.  Pass `response_dict` through this function before calling `jsonify()` on it.  When you run your program, you should see a cleaner JSON output.
 
 <a id="using-javascript"></a>
 ### 3.2.6 Extension: Using JavaScript
@@ -1915,18 +1940,7 @@ First, create a boilerplate HTML5 document called `results.html`:
 </html>
 ```
 
-Before we can start designing our template, we have to actually pass the variable into the template.  We do this in the `render_template()` function, where ([as the documentation indicates][render-template]) we can pass variables as keyword arguments.  We can also remove our import for jsonify, as we are no longer using it.  Edit `app.py`:
-
-```python
-from flask import Flask, render_template, request
-import requests
-...
-		response_dict = requests.get(url).json()
-		return render_template("results.html", api_data=response_dict)
-...
-```
-
-> Here the variable `api_data` has an arbitrary name chosen to be used from within the template.  Inside the template, we will refer the the data as `api_data`, not `response_dict`.  Often these two names will be the same, i.e. `response_dict=response_dict`, but we'll leave them different for clarity.
+Before we can start designing our template, we have to actually pass the variable into the template.  We do this in the `render_template()` function, where ([as the documentation indicates][render-template]) we can pass variables as keyword arguments.
 
 We've passed our data into the HTML document, so now we'll turn `results.html` into a dynamic template.  As a concept, lets have an unordered list of all the results, where each item represents a book with its title, authors, and link. 
 
@@ -1966,11 +1980,11 @@ Now lets populate the dynamic list item.  We can insert variables into Flask usi
 {% for book in api_data["items"] %}
 	<li>
 		<a href={{ book.accessInfo.webReaderLink }}><h3>{{ book.volumeInfo.title }}</h3></a>
-		<h4>
+		<h5>
 			{% for author in book.volumeInfo.authors %}
 				<ul>{{ author }}</ul>
 			{% endfor %}
-		</h4>
+		</h5>
 	</li>
 {% endfor %}
 </ul>
@@ -2005,11 +2019,11 @@ Our results page looks great, but what if we want to do another search?  Let's p
 			{% for book in api_data["items"] %}
 				<li>
 					<a href={{ book.accessInfo.webReaderLink }}><h3>{{ book.volumeInfo.title }}</h3></a>
-					<h4>
+					<h5>
 						{% for author in book.volumeInfo.authors %}
 							<ul>{{ author }}</ul>
 						{% endfor %}
-					</h4>
+					</h5>
 				</li>
 			{% endfor %}
 		</ul>
@@ -2055,11 +2069,11 @@ Now, we can delete everything that is in `search.html` from `results.html`, and 
 {% for book in api_data["items"] %}
 	<li>
 		<a href={{ book.accessInfo.webReaderLink }}><h3>{{ book.volumeInfo.title }}</h3></a>
-		<h4>
+		<h5>
 			{% for author in book.volumeInfo.authors %}
 				<ul>{{ author }}</ul>
 			{% endfor %}
-		</h4>
+		</h5>
 	</li>
 {% endfor %}
 </ul>
@@ -2070,6 +2084,119 @@ Now, we can delete everything that is in `search.html` from `results.html`, and 
 And that's it!  When `render_template()` is called on `results.html`, Flask sees that `results.html` extends `search.html`, so it renders `search.html` filling in any `{% block %}`s that were define in `results.html`.  When `search.html` is rendered, the empty `{% block %}` is ignored.  
 
 View it live!  You'll see the form persist into the results page, even though `results.html` doesn't have the form HTML in it.
+
+<a id="base-templates-and-style"></a>
+### 3.3.3 Base Templates and Style
+
+Now let's take a minute to add Foundation and CSS to the search and results pages. Instead of copy and pasting the Foundation set up over and over again, let's use templating to modularize it!
+
+Create a file called `base.html` in the `/templates` directory. Here, we will place all of the code that is applicable to all of the other HTML files and let other files simply extend this one.
+
+```html
+<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+  <meta charset="utf-8">
+  <title>{% block title %}{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/foundation.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+
+</head>
+<body>
+  <div class="row">
+      <div class="large-12 columns">
+          <div class="panel">
+              {% block body %}{% endblock %}
+          </div>
+      </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/vendor/jquery.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/foundation.js') }}"></script>
+  <script>
+  	$(document).foundation();
+  </script>
+</body>
+</html>
+```
+
+<i>Note that we use `url_for` here to let Flask find the correct files for us since we are generalizing.</i>
+
+Now, we can modify strip the other HTML files to their unique components:
+
+`hello.html`:
+
+```html
+{% extends "base.html" %}
+{% block title %} Reading List App {% endblock %}
+{% block body %}
+    <h1>Reading List App</h1>
+    <p>This web app allows users to search for books and add them to their reading lists!</p>
+    <a href="/search"><button class="launch-button">Launch App</button></a>
+{% endblock %}
+```
+
+`search.html`:
+
+```html
+{% extends "base.html" %}
+{% block title %} Search {% endblock %}
+{% block body %}
+    <h1>Search</h1>
+    <form action="/search" method="POST">
+        <div class="small-10 columns">
+            <input type="text" placeholder="Search for a book" id="user_search" name="user_search" required/>
+        </div>
+        <div class="small-2 columns">
+            <button class="postfix search-button" type="submit">Search</button>
+        </div>
+    </form>
+    {% block results %}{% endblock %}
+{% endblock %}
+```
+
+<i>We added some Foundation here to position the search bar and button.</i>
+
+
+`results.html`:
+
+```html
+{% extends "search.html" %}
+{% block results %}
+<div class="results">
+	<ul>
+	{% for book in api_data["items"] %}
+		<li>
+			<a href={{ book.accessInfo.webReaderLink }}><h3>{{ book.volumeInfo.title }}</h3></a>
+			<h5>
+				{% for author in book.volumeInfo.authors %}
+					<ul>{{ author }}</ul>
+				{% endfor %}
+			</h5>
+		</li>
+	{% endfor %}
+	</ul>
+</div>
+{% endblock %}
+```
+
+
+Finally, let's style the results page. Add the following lines to `app.css`.
+
+```css
+.results {
+    text-align: left;
+    margin-top: 100px;
+}
+
+li {
+    list-style-type: none;
+    padding-bottom: 25px;
+}
+```
+
+Check out the app now at `localhost:5000`!
 
 
 <a id="templating-best-practices"></a>
@@ -2084,22 +2211,24 @@ What if there are no results from the search?  The `items` list will be empty, a
 ```html
 {% extends "search.html" %}
 {% block results %}
-{% if api_data["items"] %}
-	<ul>
-	{% for book in api_data["items"] %}
-		<li>
-			<a href={{ book.accessInfo.webReaderLink }}><h3>{{ book.volumeInfo.title }}</h3></a>
-			<h4>
-				{% for author in book.volumeInfo.authors %}
-					<ul>{{ author }}</ul>
-				{% endfor %}
-			</h4>
-		</li>
-	{% endfor %}
-	</ul>
-{% else %}
-<p>There were no books found.</p>
-{% endif %}
+<div class="results">
+	{% if api_data["items"] %}
+		<ul>
+		{% for book in api_data["items"] %}
+			<li>
+				<a href={{ book.accessInfo.webReaderLink }}><h3>{{ book.volumeInfo.title }}</h3></a>
+				<h5>
+					{% for author in book.volumeInfo.authors %}
+						<ul>{{ author }}</ul>
+					{% endfor %}
+				</h5>
+			</li>
+		{% endfor %}
+		</ul>
+	{% else %}
+		<p>There were no books found.</p>
+	{% endif %}
+</div>
 {% endblock %}
 ```
 
@@ -2107,7 +2236,7 @@ What if there are no results from the search?  The `items` list will be empty, a
 
 What if a book doesn't have an author listed?  Or the link is missing?  Whenever we use template variables, we should be sure that they exist first, lest the user see some ugly template error instead of your app.
 
-Wrap each `{{ }}` statement in a Jinja2 `{% if %}`, checking if the variable exists before using it.
+As an exercise, wrap each `{{ }}` statement in a Jinja2 `{% if %}`, checking if the variable exists before using it.
 
 
 <a href="#top" class="top" id="level4">Top</a>
