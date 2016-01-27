@@ -3,7 +3,7 @@
 
 *Learn web development with Flask.*
 
-Written and developed by [Dan](http//www.schlosser.io), [Raymond](http://www.raymondxu.io), Matt, and [ADI](http://www.adicu.com).
+Written and developed by [Dan](http//www.schlosser.io), [Raymond](http://www.raymondxu.io), [Matt](http://mattpic.com), and [ADI](http://www.adicu.com).
 
 <a href="#top" class="top" id="getting-started">Top</a>
 ## About This Document
@@ -66,10 +66,30 @@ Basic knowledge of the Python programming language is suggested. If you don't al
 		-	[3.3.1 Template Variables Using Jinja2](#template-variables-using-jinja2)
 		-	[3.3.2 Extending Templates](#extending-templates)
 		-	[3.3.3 Base Templates and Style](#base-templates-and-style)
--	[Level 4: Storing Data: Databases](#level4)
--	[Level 5: User Sessions](#level5)
--   [Additional Resources](#additionalresources)
-
+-	[Level 4: Storing Favorites: Databases](#level4)
+	- 	[4.1 Using MongoDB](#mongo-db)
+		-	[4.1.1 What is MongoDB?](#what-mongo)
+		-	[4.1.2 Using Flask-Mongoengine](#flask-mongo)
+	- 	[4.2 Adding a Model](#model)
+		-	[4.2.1 Creating a `FavoriteBook` Model](#fav-book)
+		-	[4.2.2 Creating and Saving Objects](#create-save)
+	- 	[4.3 Viewing Favorites](#view-fav)
+		-	[4.3.1 Querying for Objects](#query-obj)
+		-	[4.3.2 Presenting a List](#list-obj)
+-	[Level 5: Adding User-Specific Favorites: Sessions & Accounts](#level5)
+	-	[5.1 Using `Flask-Login`](#flask-login)
+		-	[5.1.1 Installing `Flask-Login`](#install-login)
+		-	[5.1.2 Creating a User Object](#user_obj)
+		-	[5.1.3 Adding the `user_loader`](#user_loader)
+	-	[5.2 Handling Registration and Login](#register_login)
+		-	[5.2.1 Create a `UserForm` with WTForms](#wtforms)
+		-	[5.2.2 Creating a Registration Page](#register)
+		-	[5.2.3 Creating a Login Page](#login)
+		-	[5.2.4 Adding Logout](#logout)
+	-	[5.3 Personalizing Favorites](#personal-favs)
+		-	[5.3.1 Using `@login_required`](#login_required)
+		-	[5.3.2 Adding `User` to `FavoriteBook`](#add_user_fav)
+		-	[5.3.3 Changing our Favorites Page](#change_fav_page)
 
 ------------------------------
 <a href="#top" class="top" id="level0">Top</a>
@@ -1356,7 +1376,6 @@ Great! Now we have a basic landing page styled using CSS and foundation. We will
 <a href="#top" class="top" id="level3">Top</a>
 ## Level 3: Adding Search Functionality: APIs
 
-
 <a href="#top" class="top" id="api-basics">Top</a>
 ## 3.1 API Basics
 
@@ -2240,12 +2259,491 @@ As an exercise, wrap each `{{ }}` statement in a Jinja2 `{% if %}`, checking if 
 
 
 <a href="#top" class="top" id="level4">Top</a>
-## Level 4: Databases
+## Level 4: Storing Favorites: Databases
+Right now, our website allows us to search for books. However, it would be nice if we had a way to save books that looked interesting. Let's work on adding a "Favorites" feature, which will allow us to mark our favorite books.
 
+<a id="mongo-db"></a>
+## 4.1 Using MongoDB
+To store favorites for our application, we're going to be used a database called MongoDB.
+
+<a id="what-database"></a>
+### 4.1.1 What is a database?
+In order to store favorites for our app, we'll need to be use a database. A [database][database] is essentially just an organized collection of data. The data can be anything: bank transactions, songs, restaurant reservations, anything. As long as you have an organized way of representing it, you can store it.
+
+They are incredibly common; almost every application that you have every used probably has a database to store some kind of data. There's a lot of things you can do with a database, but for this tutorial we'll only focus on the basics, which can be remembered by the [CRUD][crud] acronym: create, read, update, and delete.
+
+<a id="mongo-db"></a>
+### 4.1.2 What is MongoDB?
+There are several different kinds of databases you may have heard of. Some common ones are [MySQL][mysql], [Oracle][oracle], and [PostgreSQL][postgresql]. However, the one that we're going to be using is **MongoDB**. [Mongo][mongodb], as it is more commonly known, will allow us to quickly and easily start storing data, which will great for our purposes.
+
+MongoDB is what's called a [NoSQL](nosql) database, which means data isn't stored in the common SQL formatting. Think of SQL data like rows in a spreadsheet: there's a header value for each column of the spreadsheet, and the rows of each spreadsheet provide a value for each of the columns. NoSQL data doesn't use this kind of storage; instead, each object is stored as its own chunk of data and doesn't relate to the other rows in the same way.
+
+<a id="flask-mongo"></a>
+### 4.1.3 Using Flask-Mongoengine
+To use MongoDB, Flask provides a really nice add-on called [`Flask-Mongoengine`][flask-mongoengine], which allows us to perform our CRUD operations directly from our Flask app.
+
+To get started using it, first install MongoDB; if you're inside your Vagrant box, you should follow the instruction guide for Ubuntu available [here][mongo-download-linux] (NOTE: if you're not inside your box, installation guides for other operating systems are available [here][mongo-download-general]).
+
+Once you've done that, we'll need to install `Flask-Mongoengine`. To do that, run the following command:
+
+```bash
+$ sudo pip install flask-mongoengine
+```
+
+Now that we have our database and Flask library ready to go, let's create a database object for our app to use. Add the following code at the top of your `app.py` file:
+
+```python
+from flask.ext.mongoengine import MongoEngine
+...
+app.config['MONGODB_SETTINGS'] = { 'db' : 'books' }
+...
+db = MongoEngine(app)
+```
+
+The import statement, below your other import statement, simply the `MongoEngine` object, which is the basic object we'll be using for our app. Next, below our other `app.config` changes, we'll add the settings for MongoDB: basically, we just say the database that we'll be using will be called "books". Next, we create an instance of our MongoEngine class, which we'll use later.
+
+<a id="model"></a>
+## 4.2 Adding a Model
+Now that we have our database all set-up, we need to specify what kind of data we're going to be storing. Generally, to specify this, we create a [database model][database-model], which determines what our data is and how it will be stored. Let's work on creating our model.
+
+<a id="fav-book"></a>
+### 4.2.1 Creating a `FavoriteBook` Model
+Since we're storing books that we're marking as favorites, let's create a model called `FavoriteBook`. To store this, we're going to need three things: the author's name, the name of the book, and the link to the book. We can include all of those things in our model.
+
+In your `app.py` file, just below the line in which we instantiate `db`, add the following code to create our model:
+
+```python
+class FavoriteBook(db.Document):
+    author = db.StringField(required=True)
+    title = db.StringField(required=True)
+    link = db.StringField(required=True)
+```
+
+(NOTE: generally it's best to not keep models in the same file as all your other logic. We could've also created a new file called `models.py` and put our code there. However, for the sake of this tutorial, we only have one model, so it makes sense to keep it all in the same file.)
+
+<a id="create-save"></a>
+### 4.2.2 Creating and Saving Objects
+Now that we have our model created, we're going to want to actually create a model to save a model as a favorite. To do that, let's first add a button to each of our search results. Below the `h5` tag that shows our authors, add the following code to provide a link to do so:
+
+```html
+<a href="/favorite/{{ book.volumeInfo.id }}">Add to favorites</a>
+```
+
+Our search page should now look like this:
+
+![Add to Favs](https://dl.dropboxusercontent.com/s/xlzxfdvjdahkan4/add-to-favs.png)
+
+You'll notice that our link refers to a new route called `favorite` - to it, we pass the id of the book as a parameter so we know what book we're adding to favorites. Try clicking on the link; you should get a 404 error. That's because we haven't created the `/favorite` endpoint yet. Let's do that now!
+
+In our `app.py` file, create a new route and function that looks as follows:
+
+```python
+@app.route("/favorite/<id>")
+def favorite(id):
+```
+
+You'll notice `<id>` in the URL route we're intercepting. This is a really cool feature Flask includes; it allows us to take variable parts of a URL and pass them to our route function. So when we pass the ID of the book as to the URL, like we did above, we'll get it as a parameter passes to our function. So, for example, if Flask intercept the route `/favorite/12345`, when our function is called, `id` will equal `12345`; this allows us to customize what our function does depending on whatever is passed into us.
+
+Now that we have access to our book ID, let's create our model and save it to our database! The following code, added to our `favorite` function, should do it:
+
+```python
+book_url = "https://www.googleapis.com/books/v1/volumes/" + id
+book_dict = requests.get(book_url).json()
+new_fav = FavoriteBook(author=book_dict["volumeInfo"]["authors"][0], title=book_dict["volumeInfo"]["title"], link=book_url)
+new_fav.save()
+return render_template("confirm.html", api_data=book_dict)
+```
+
+First, we create the URL for our book, which just appends the ID to our base URL. Then, we query the API with the link, so we have all the information we need. Next, we create our new model; we pass the info from our API results, taking the first author's name, the title of the book, and the Google Books URL. Once we've done this, all we need to is called `.save()` on our newly created object, and it is saved to our database. It's that easy! Simply create a new object using our default constructor and call the `save()` method, and our data will be persisted to MongoDB.
+
+Finally, we pass our book data to a new template called `confirm.html`; create that now to provide a page that confirms that our book was added to favorites. Create a new file called `confirm.html` and add this to it:
+
+```html
+{% extends "base.html" %}
+{% block title %} Favorite Added {% endblock %}
+{% block body %}
+    <h1>Reading List App</h1>
+    <p>Thanks for adding {{api_data.volumeInfo.title}} to your favorites.</p>
+    <a href="/favorites"><button class="launch-button">View Favorites</button></a>
+{% endblock %}
+```
+
+Once we do this, you should see a screen that looks something like this:
+
+![Fav Confirm](https://dl.dropboxusercontent.com/s/xgzk1ldkcfvziq0/fav-add.png)
+
+Now that we're done, we're all done with the functionality to add books to our favorites!
+
+<a id="view-fav"></a>
+## 4.3 Viewing Favorites
+Now that we've started adding books to our favorites, we'll need a screen to view all the books we've already added to favorites. We'll build that now.
+
+<a id="query-obj"></a>
+### 4.3.1 Querying for Objects
+We've already seen how to create objects; now, we'll need a way to pull objects out of our database. The code for that will look as follows:
+
+```
+books = FavoriteBook.objects()
+```
+
+It's as simple as that; to get all the `FavoriteBook` objects we have stored, all we have to do is call the `objects()` function. We can optionally pass checks we want to do as parameters to this function call. For example, say we want to see whether the user has favorited `Great Expectations`, we could say `book = FavoriteBook.objects(title='Great Expectations')`, which would only return the book (or books) that have that as the title. In our case, however, we'll want all of the books.
+
+<a id="list-obj"></a>
+### 4.3.2 Presenting a List of Favorites
+You may have noticed that, in our `confirm.html` template, we added a button to allow us to see the list of favorites we've created thus far. For that, we added an endpoint `/favorites`, which will be our list of books we've identified as favorites. We're going to handle that endpoint now.
+
+To your `app.py` file, add a route at the bottom, as follows:
+
+```python
+@app.route("/favorites")
+def favorites():
+  favorites = FavoriteBook.objects()
+  return render_template("favorites.html", favorites=favorites)
+```
+
+As you'll see, the code is quite simple. We just query for all of our `FavoriteBook` objects, as we did above, and then pass them to a template called `favorites.html`. We'll need to create that file, so create a new file with that name in the `templates/` directory. It should look as follows:
+
+```html
+{% extends "base.html" %}
+{% block title %}Favorites{% endblock %}
+{% block body %}
+<h1>Favorites</h1>
+{% if favorites|length > 0 %}
+    <ul>
+    {% for fav in favorites  %}
+        <li>
+            <a href={{ fav.link }}><h3>{{ fav.title }}</h3></a>
+            <h5><ul>{{ fav.author }}</ul></h5>
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>You haven't added any favorites yet.</p>
+{% endif %}
+{% endblock %}
+```
+
+The template looks pretty similar to results. We show a list of each of the favorites, or if there are zero favorites then we show that message. Then, just as we did for the JSON objects, we can refer to the attributes of our model with the Python dot syntax. Thus, to show the title of a book, we simply say `fav.title` inside the template.
+
+Try adding some books to your favorites. Your page should look something like this:
+
+![Favorites List](https://dl.dropboxusercontent.com/s/fei3c94d2bh2v9f/favorites.png)
 
 <a href="#top" class="top" id="level5">Top</a>
-## Level 5: User Sessions
+## Level 5: Adding User-Specific Favorites: Sessions & Accounts
+If you add lots of favorites to your list, you'll notice it might get crowded. If you're going to have more than one user, it probably makes sense to have a favorites list for each user of your website; that way, different users can have different favorites. We're going to work on that in this section.
 
+<a id="flask-login"></a>
+## 5.1 Using `Flask-Login`
+Generally, to have users log in and out of your application, you need to use what's called a user session. The session, as this [Stack Overflow][what-are-sessions] answer describes, essentially passes data back and forth with every request, providing an id that only the client has access to. Generally, the passing of these id's can get pretty messy. Luckily, there's a great extension for Flask called [`Flask-Login`][flask-login] that makes handling these sessions much more manageable.
+
+<a id="install-login"></a>
+### 5.1.1 Installing `Flask-Login`
+Before we begin, we'll need to install our new extension. To do so, run the following command, as we've been doing for each of our new installations:
+
+```bash
+$ sudo pip install flask-login
+```
+
+Next, we'll need to do some configuration; most importantly, we need to create a login manager object that will work on our behalf.
+
+Open up `app.py`. At the top, add the following `import` statement:
+
+```python
+from flask.ext.login import LoginManager
+```
+
+Next, just below where we declare `app`, add the following two lines to create our login manager object:
+
+```python
+login_manager = LoginManager()
+login_manager.init_app(app)
+```
+
+<a id="user_obj"></a>
+### 5.1.2 Creating a User Object
+As you can read about in its documentation, `Flask-Login` requires that we provide a class called `User` to it; this will represent each user of the service, which the extension will handle the logging in and out of.
+
+The extension also requires us to implement four methods in our `User` class: `is_authenticated`, `is_active`, `is_anonymous`, and `get_id`. Each of these methods represents something that the `Flask-Login` library will need to know to take care of user login.
+
+In `app.py`, let's add the following `User` class, just above where we defined `FavoriteBook` before:
+
+```python
+class User(db.Document):
+  name = db.StringField(required=True,unique=True)
+  password = db.StringField(required=True)
+  def is_authenticated(self):
+    users = User.objects(name=self.name, password=self.password)
+    return len(users) != 0
+  def is_active(self):
+    return True
+  def is_anonymous(self):
+    return False
+  def get_id(self):
+    return self.name
+```
+
+Let's look at the code a little bit more in-depth. First, we add two fields: `name` and `password`. This user is going to be pretty simple. Also worth noting, we make sure the name is unique, as this will be our identifying attribute.
+
+Next, we see the implementation of each of the four methods we discussed before. `is_active` and `is_anonymous` are boring, and we just return the same thing each time. For `is_authenticated`, we check our database to see if a user exists that matches the one we currently have; if so, it returns true. For `get_id`, we simply pass back the name; we need these id's to be unique, which is why we defined the name above to be unique.
+
+<a id="user_loader"></a>
+### 5.1.3 Adding the `user_loader`
+`Flask-Login` requires us to do one more thing: provide a way to load a user. Essentially, we'll need a way to, given an id, load a user. To identify this function, we can use the `@login_manager.user_loader` decorator so that the extension knows which method to call. Add the code for this ust below our `User` class definition:
+
+```python
+@login_manager.user_loader
+def load_user(name):
+  users = User.objects(name=name)
+  if len(users) != 0:
+    return users[0]
+  else:
+    return None
+```
+
+Once we're done with this, we're all done creating our user objects, and `Flask-Login` should be all set to use.
+
+<a id="register_login"></a>
+## 5.2 Handling Registration and Login
+There are two problems with our above `Flask-Login` situation: first, there's no page to sign-in, and second, there are no user accounts that we can sign into. To fix these problems, we'll need ways to register and login.
+
+<a id="wtforms"></a>
+### 5.2.1 Create a `UserForm` with WTForms
+[`WTForms`][#wtforms] is an incredibly useful library that helps us to generate forms that are really easy to validate. Form validation can be an incredibly tedious task. Normally you have to write custom JavaScript to check all sorts of things. Do the passwords match? Is your email address the correct format? Did you fill out all the required inputs. `WTForms` makes this really easy to do.
+
+Particularly useful is a method called `model_form`, which automatically creates a form given a `MongoEngine` model. So, given the `User` object we just created, creating a form for it can be done in two lines. Add these just under your `User` class definition:
+
+```python
+UserForm = model_form(User)
+UserForm.password = PasswordField('password')
+```
+
+(Note: add the following import statements at the top: `from flask.ext.mongoengine.wtf import model_form` and `from wtforms import PasswordField`).
+
+Now, we have a new object called `UserForm`, which represents a form that will gather all of the fields that we have in our `User` object; how cool is that?! Imagine we had 40 different fields for our `User` object - `UserForm` would be a form that had 40 inputs and custom validators to make sure they matched all the restrictions we put on them. The second line simply changes our `password` field (corresponding to the `password` object in `User`) to a PasswordField, so that the text is obfuscated when users type in their passwords.
+
+<a id="register"></a>
+### 5.2.2 Creating a Registration Page
+Now that we have the form, let's add a new route, `/register`. Add this anywhere in your `app.py` file:
+
+```python
+@app.route("/register", methods=["POST", "GET"])
+def register():
+  form = UserForm(request.form)
+  if request.method == 'POST' and form.validate():
+    form.save()
+    return redirect("/login")
+
+  return render_template("register.html", form=form)
+```
+
+First, we create an instance of our `UserForm` object given the form data passed in our request. If we're posting data, we try to validate it (meaning all of our fields match the conditions we applied to them - i.e. less than the minimum length, unique, etc.). Then, to save the model that our data represents, all we have to do is call `form.save()`. Think about what that means; we can type 'matt' and 'password', call `.save()` on the form, and our database automatically has a new `User` object added to it. This simplicity makes the `MongoEngine`/`WTForms` combination very useful. Assuming a successful save, we'll just redirect to the login page (which we'll make next).
+
+In the case that our form isn't ready yet (or we haven't filled it out yet), we need to pass it to the user to be seen! To do that, we created the `register.html`; create your new file and add this content to it:
+
+```html
+{% extends "base.html" %}
+{% block title %}Register{% endblock %}
+{% block body %}
+<h2>Register</h2>
+
+<form action="" method="POST">
+  {{ form.csrf_token }}
+  <div>
+    {{ form.name.label}}
+    {{ form.name }}
+  </div>
+  <div>
+    {{ form.password.label }}
+    {{ form.password }}
+  </div>
+  <input type="submit" value="Register">
+</form>
+{% endblock %}
+```
+
+The template is really easy. We create a new form, and for each of the fields in our form, simply display their label and their actual input field. Then, we add a submit button that says "Register". 
+
+Something interesting you may note is the use of the `csrf_token`. CSRF stands for cross-site registration forgery; it can do damage to your website by allowing people from other sites to post things to your website maliciously. To do that, we use what's called a token that can only be uniquely identified for our application. To do that, add the following config lines at the top of our `app.py` file:
+
+```python
+app.config['SECRET_KEY'] = '<insert random string>'
+app.config['WTF_CSRF_ENABLED'] = True
+```
+
+Pick your own secret key, but make sure it's long and unique.
+
+(NOTE: You will have to add `redirect` to the top `from flask` import statement.)
+
+Try going to `localhost:5000/register`. It should look something like this:
+
+![Register](https://dl.dropboxusercontent.com/s/j7ggzjyj7jyyvo3/register.png)
+
+Fill out the form and press register; if all goes according to plan, you should be redirected to the `/login` page, which should give you a 404 error. Let's page that page now.
+
+<a id="login"></a>
+### 5.2.3 Creating a Login Page
+The login page should end up looking quite similar to the registration page. However, on the backend, we'll need to make a couple changes; we'll need to login a user, rather than saving a new user to our database. For this, we'll make use of the `FlaskLogin` material we configured in the last step.
+
+Create a new route for `/login`. Your function should look like this:
+
+```python
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+  form = UserForm(request.form)
+  if request.method == 'POST' and form.validate():
+    user = User(name=form.name.data,password=form.password.data)
+    login_user(user)
+    return redirect('/search')
+
+  return render_template('login.html', form=form)
+```
+
+Just like last time, we create a new `UserForm` (we can reuse the form because, just like registration, it takes a username and password). If our form validates, we create a new user object given our username and password. Then, in a very important line, we call the `FlaskLogin` built-in function `login_user` (you'll need to add `login_user` in our `from flask.ext.login` line). This function will make use of the other methods we already implemented (`is_authenticated`, `get_id`, etc.); if it's successful, we'll continue in our execution, and if not, `FlaskLogin` will throw an error.
+
+In the case that we have a successful login, we'll be redirected to our `/search` page, which is the app's homepage. In the case where we haven't posted yet, we'll render `login.html`, a new template you should create. Its code will look like this:
+
+```html
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block body %}
+<h2>Login</h2>
+
+<form action="" method="POST">
+  {{ form.csrf_token }}
+  <div>
+    {{ form.name.label}}
+    {{ form.name }}
+  </div>
+  <div>
+    {{ form.password.label }}
+    {{ form.password }}
+  </div>
+  <input type="submit" value="Login">
+</form>
+{% endblock %}
+```
+
+The page will look like very similar to our registration page. Try logging in, and you should see the search page.
+
+<a id="logout"></a>
+### 5.2.4 Adding Logout
+Logout is easier, because we don't need a dedicated page. Let's make a `/logout` route that, when visited, will simply log a user out:
+
+```python
+@app.route("/logout")
+def logout():
+    logout_user()
+    return redirect("/")
+```
+
+After you add the `logout_user` function to your `flask.ext.login` import statement, you should be able to logout and return to the homepage.
+
+<a id="personal-favs"></a>>
+## 5.3 Personalizing Favorites
+Now that we have user accounts that we can register and log in and out of, it's time to finish off the job. Let's use the accounts we've created to make sure every user gets her own favorite reading list.
+
+<a id="login_required"></a>
+### 5.3.1 Using `@login_required`
+A pretty useful decorator can help us to make favorites personalized. Any page that you want to be blocked to users that are not logged in can be blocked by simply adding this decorator. For example, let's make it such that only users who are logged in can access the `/search` page. To do that, I just change the function definition to look as follows:
+
+```python
+@app.route("/search", methods=["POST", "GET"])
+@login_required
+def search():
+```
+
+First, go to `localhost:5000/logout` to make sure you're logged out. Then, try going to `localhost:5000/search`; you should see a screen like this:
+
+![Unauthorized](https://dl.dropboxusercontent.com/s/lwrcmm9sh5zduue/unauth.png)
+
+This is great! We won't need to start every route we write with an if statement to see if a user is logged in. This is also a big step to making our data sensitive between users. For fullness' sake, add the `@login_required` decorator to `/favorite/<id>` and `/favorites` as well; those pages only make sense if we have a user.
+
+(NOTE: per usual, remember you'll have to import the `login_required` decorator.)
+
+<a id="add_user_fav"></a>
+### 5.3.2 Adding `User` to `FavoriteBook`
+If we think back to our `FavoriteBook` model, we had three attributes: title, author, and link. However, this model pays no attention to who marked it as a favorite. Now that we have the user accounts to support this, we should remember whose favorite book it is. Let's do that by editing the model:
+
+```python
+class User(db.Document):
+  name = db.StringField(required=True,unique=True)
+  password = db.StringField(required=True)
+  def is_authenticated(self):
+    users = User.objects(name=self.name, password=self.password)
+    return len(users) != 0
+  def is_active(self):
+    return True
+  def is_anonymous(self):
+    return False
+  def get_id(self):
+    return self.name
+
+class FavoriteBook(db.Document):
+  author = db.StringField(required=True)
+  title = db.StringField(required=True)
+  link = db.StringField(required=True)
+  poster = db.ReferenceField(User)
+```
+
+Our two models will now look like this. You'll notice, at the bottom we added `poster = db.ReferenceField(User)`. A `ReferenceField` object, as you might guess, references another type of object. In this case, we pass in a `User` object; there will be a user associated with each `FavoriteBook`, and we'll call that user the poster.
+
+Just for the sake of emptying out old data, let's remove all the favorite books we have thus far; they don't have posters attached, so it'll be bad when we don't have any user account to show them in.
+
+To do this, let's open the Mongo shell. The shell is essentially a way to perform all the different commands we've been running, like `FavoriteBook.objects()`, but in a command-line interface. To start, simply type `mongo` to open up this shell. After it was open, I typed the following commands to remove all my previously recorded `FavoriteBook` items:
+
+```bash
+$ use books
+switched to db books
+$ db.favorite_book.remove({})
+WriteResult({ "nRemoved" : 2 })
+```
+
+First, we switch to our `books` database, which is the name we previously provided in the Flask config. Then, we remove the `favorite_book` items we already have stored; you'll see I removed 2. To read more about the Mongo shell (you should! it's awesome!), visit [this website][mongo-shell].
+
+Now that we've removed all our old data, let's update `/favorite/<id>` to provide our `poster` object, so we know each favorite book has a user associated with it:
+
+```python
+@app.route("/favorite/<id>")
+@login_required
+def favorite(id):
+  book_url = "https://www.googleapis.com/books/v1/volumes/" + id
+  book_dict = requests.get(book_url).json()
+  poster = User.objects(name=current_user.name).first()
+  new_fav = FavoriteBook(author=book_dict["volumeInfo"]["authors"][0], title=book_dict["volumeInfo"]["title"], link=book_url, poster=poster)
+  new_fav.save()
+  return render_template("confirm.html", api_data=book_dict)
+```
+
+Basically everything stays the same, except we query for the current user object with the call `User.objects(name=current_user.name).first()`. Be sure to import `current_user`, as it's a built-in variable for `FlaskLogin`. We can be sure to return `first()` because login is required on this page, which means that we will certainly have a user of the name of the currently logged-in user.
+
+Try adding a few favorite books to your account; if everything works normally, then that means we're very close.
+
+<a id="change_fav_page"></a>
+### 5.3.3 Changing our Favorites Page
+Now, let's make the final changes to our `/favorites` page so that we only see favorite books posted by our own account. For the `/favorites` route, let's change the function to look as follows:
+
+```python
+@app.route("/favorites")
+@login_required
+def favorites():
+  current_poster = User.objects(name=current_user.name).first()
+  favorites = FavoriteBook.objects(poster=current_poster`)
+  return render_template("favorites.html", current_user=current_user, favorites=favorites)
+```
+
+With one small tweak, we only load the `FavoriteBook` objects who have the poster equal to the current user. Then, to add a little bit more detail, we pass the `current_user` object to the template; that way, we can make our page a little bit more personalized.
+
+In `favorites.html`, we changed the `<h1>` line so that it looks like this:
+
+```html
+<h1>{{current_user.name}}'s Favorites</h1>
+```
+
+This way, we can access the name of the current user and show that to the user. 
+To view our finalized product, check out my personalized page, after I added a few favorites:
+
+![Personalized Recommendations](https://dl.dropboxusercontent.com/s/7z9vv03tpydvwvk/personalfaves.png)
 
 <a href="#top" class="top" id="additionalresources">Top</a>
 ## Additional Resources
@@ -2353,6 +2851,26 @@ Along with this tutorial, there is a wealth of information available on Python a
 [foundation-forms]: http://foundation.zurb.com/docs/components/forms.html
 [foundation-lists]: http://foundation.zurb.com/docs/components/typography.html#lists
 [foundation-small]: http://foundation.zurb.com/docs/components/typography.html#small-header-segments
+
+<!-- favorites -->
+[database]: https://en.wikipedia.org/wiki/Database
+[mysql]: https://www.mysql.com/
+[oracle]: https://www.oracle.com/database/index.html
+[postgresql]: http://www.postgresql.org/
+[mongodb]: https://www.mongodb.org/
+[mongo-download-linux]: https://docs.mongodb.org/v3.0/tutorial/install-mongodb-on-ubuntu/
+[mongo-download-general]: https://docs.mongodb.org/v3.0/installation/#installation-guides
+[crud]: https://docs.mongodb.org/manual/crud/
+[nosql]: http://nosql-database.org/
+[flask-mongoengine]: http://flask-mongoengine.readthedocs.org/en/latest/
+[database-model]: https://en.wikipedia.org/wiki/Database_model
+
+<!-- login -->
+[what-are-sessions]: http://stackoverflow.com/questions/3804209/what-are-sessions-how-do-they-work
+[flask-login]: https://flask-login.readthedocs.org/en/latest/
+[wtforms]: https://wtforms.readthedocs.org/en/latest/
+[mongo-shell]: https://docs.mongodb.org/manual/reference/mongo-shell/
+
 
 <!-- tools -->
 [curl-win]: http://curl.haxx.se/download.html
