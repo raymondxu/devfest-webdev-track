@@ -67,18 +67,29 @@ Basic knowledge of the Python programming language is suggested. If you don't al
 		-	[3.3.2 Extending Templates](#extending-templates)
 		-	[3.3.3 Base Templates and Style](#base-templates-and-style)
 -	[Level 4: Storing Favorites: Databases](#level4)
-	- [4.1 Using MongoDB](#mongo-db)
+	- 	[4.1 Using MongoDB](#mongo-db)
 		-	[4.1.1 What is MongoDB?](#what-mongo)
 		-	[4.1.2 Using Flask-Mongoengine](#flask-mongo)
-	- [4.2 Adding a Model](#model)
+	- 	[4.2 Adding a Model](#model)
 		-	[4.2.1 Creating a `FavoriteBook` Model](#fav-book)
 		-	[4.2.2 Creating and Saving Objects](#create-save)
-	- [4.3 Viewing Favorites](#view-fav)
+	- 	[4.3 Viewing Favorites](#view-fav)
 		-	[4.3.1 Querying for Objects](#query-obj)
 		-	[4.3.2 Presenting a List](#list-obj)
--	[Level 5: User Sessions](#level5)
--   [Additional Resources](#additionalresources)
-
+-	[Level 5: Adding User-Specific Favorites: Sessions & Accounts](#level5)
+	-	[5.1 Using `Flask-Login`](#flask-login)
+		-	[5.1.1 Installing `Flask-Login`](#install-login)
+		-	[5.1.2 Creating a User Object](#user_obj)
+		-	[5.1.3 Adding the `user_loader`](#user_loader)
+	-	[5.2 Handling Registration and Login](#register_login)
+		-	[5.2.1 Create a `UserForm` with WTForms](#wtforms)
+		-	[5.2.2 Creating a Registration Page](#register)
+		-	[5.2.3 Creating a Login Page](#login)
+		-	[5.2.4 Adding Logout](#logout)
+	-	[5.3 Personalizing Favorites](#personal-favs)
+		-	[5.3.1 Using `@login_required`](#login_required)
+		-	[5.3.2 Adding `User` to `FavoriteBook`](#add_user_fav)
+		-	[5.3.3 Changing our Favorites Page](#change_fav_page)
 
 ------------------------------
 <a href="#top" class="top" id="level0">Top</a>
@@ -2419,8 +2430,320 @@ Try adding some books to your favorites. Your page should look something like th
 ![Favorites List](https://dl.dropboxusercontent.com/s/fei3c94d2bh2v9f/favorites.png)
 
 <a href="#top" class="top" id="level5">Top</a>
-## Level 5: User Sessions
+## Level 5: Adding User-Specific Favorites: Sessions & Accounts
+If you add lots of favorites to your list, you'll notice it might get crowded. If you're going to have more than one user, it probably makes sense to have a favorites list for each user of your website; that way, different users can have different favorites. We're going to work on that in this section.
 
+<a id="flask-login"></a>
+## 5.1 Using `Flask-Login`
+Generally, to have users log in and out of your application, you need to use what's called a user session. The session, as this [Stack Overflow][what-are-sessions] answer describes, essentially passes data back and forth with every request, providing an id that only the client has access to. Generally, the passing of these id's can get pretty messy. Luckily, there's a great extension for Flask called [`Flask-Login`][flask-login] that makes handling these sessions much more manageable.
+
+<a id="install-login"></a>
+### 5.1.1 Installing `Flask-Login`
+Before we begin, we'll need to install our new extension. To do so, run the following command, as we've been doing for each of our new installations:
+
+```bash
+$ sudo pip install flask-login
+```
+
+Next, we'll need to do some configuration; most importantly, we need to create a login manager object that will work on our behalf.
+
+Open up `app.py`. At the top, add the following `import` statement:
+
+```python
+from flask.ext.login import LoginManager
+```
+
+Next, just below where we declare `app`, add the following two lines to create our login manager object:
+
+```python
+login_manager = LoginManager()
+login_manager.init_app(app)
+```
+
+<a id="user_obj"></a>
+### 5.1.2 Creating a User Object
+As you can read about in its documentation, `Flask-Login` requires that we provide a class called `User` to it; this will represent each user of the service, which the extension will handle the logging in and out of.
+
+The extension also requires us to implement four methods in our `User` class: `is_authenticated`, `is_active`, `is_anonymous`, and `get_id`. Each of these methods represents something that the `Flask-Login` library will need to know to take care of user login.
+
+In `app.py`, let's add the following `User` class, just above where we defined `FavoriteBook` before:
+
+```python
+class User(db.Document):
+  name = db.StringField(required=True,unique=True)
+  password = db.StringField(required=True)
+  def is_authenticated(self):
+    users = User.objects(name=self.name, password=self.password)
+    return len(users) != 0
+  def is_active(self):
+    return True
+  def is_anonymous(self):
+    return False
+  def get_id(self):
+    return self.name
+```
+
+Let's look at the code a little bit more in-depth. First, we add two fields: `name` and `password`. This user is going to be pretty simple. Also worth noting, we make sure the name is unique, as this will be our identifying attribute.
+
+Next, we see the implementation of each of the four methods we discussed before. `is_active` and `is_anonymous` are boring, and we just return the same thing each time. For `is_authenticated`, we check our database to see if a user exists that matches the one we currently have; if so, it returns true. For `get_id`, we simply pass back the name; we need these id's to be unique, which is why we defined the name above to be unique.
+
+<a id="user_loader"></a>
+### 5.1.3 Adding the `user_loader`
+`Flask-Login` requires us to do one more thing: provide a way to load a user. Essentially, we'll need a way to, given an id, load a user. To identify this function, we can use the `@login_manager.user_loader` decorator so that the extension knows which method to call. Add the code for this ust below our `User` class definition:
+
+```python
+@login_manager.user_loader
+def load_user(name):
+  users = User.objects(name=name)
+  if len(users) != 0:
+    return users[0]
+  else:
+    return None
+```
+
+Once we're done with this, we're all done creating our user objects, and `Flask-Login` should be all set to use.
+
+<a id="register_login"></a>
+## 5.2 Handling Registration and Login
+There are two problems with our above `Flask-Login` situation: first, there's no page to sign-in, and second, there are no user accounts that we can sign into. To fix these problems, we'll need ways to register and login.
+
+<a id="wtforms"></a>
+### 5.2.1 Create a `UserForm` with WTForms
+[`WTForms`][#wtforms] is an incredibly useful library that helps us to generate forms that are really easy to validate. Form validation can be an incredibly tedious task. Normally you have to write custom JavaScript to check all sorts of things. Do the passwords match? Is your email address the correct format? Did you fill out all the required inputs. `WTForms` makes this really easy to do.
+
+Particularly useful is a method called `model_form`, which automatically creates a form given a `MongoEngine` model. So, given the `User` object we just created, creating a form for it can be done in two lines. Add these just under your `User` class definition:
+
+```python
+UserForm = model_form(User)
+UserForm.password = PasswordField('password')
+```
+
+(Note: add the following import statements at the top: `from flask.ext.mongoengine.wtf import model_form` and `from wtforms import PasswordField`).
+
+Now, we have a new object called `UserForm`, which represents a form that will gather all of the fields that we have in our `User` object; how cool is that?! Imagine we had 40 different fields for our `User` object - `UserForm` would be a form that had 40 inputs and custom validators to make sure they matched all the restrictions we put on them. The second line simply changes our `password` field (corresponding to the `password` object in `User`) to a PasswordField, so that the text is obfuscated when users type in their passwords.
+
+<a id="register"></a>
+### 5.2.2 Creating a Registration Page
+Now that we have the form, let's add a new route, `/register`. Add this anywhere in your `app.py` file:
+
+```python
+@app.route("/register", methods=["POST", "GET"])
+def register():
+  form = UserForm(request.form)
+  if request.method == 'POST' and form.validate():
+    form.save()
+    return redirect("/login")
+
+  return render_template("register.html", form=form)
+```
+
+First, we create an instance of our `UserForm` object given the form data passed in our request. If we're posting data, we try to validate it (meaning all of our fields match the conditions we applied to them - i.e. less than the minimum length, unique, etc.). Then, to save the model that our data represents, all we have to do is call `form.save()`. Think about what that means; we can type 'matt' and 'password', call `.save()` on the form, and our database automatically has a new `User` object added to it. This simplicity makes the `MongoEngine`/`WTForms` combination very useful. Assuming a successful save, we'll just redirect to the login page (which we'll make next).
+
+In the case that our form isn't ready yet (or we haven't filled it out yet), we need to pass it to the user to be seen! To do that, we created the `register.html`; create your new file and add this content to it:
+
+```html
+{% extends "base.html" %}
+{% block title %}Register{% endblock %}
+{% block body %}
+<h2>Register</h2>
+
+<form action="" method="POST">
+  {{ form.csrf_token }}
+  <div>
+    {{ form.name.label}}
+    {{ form.name }}
+  </div>
+  <div>
+    {{ form.password.label }}
+    {{ form.password }}
+  </div>
+  <input type="submit" value="Register">
+</form>
+{% endblock %}
+```
+
+The template is really easy. We create a new form, and for each of the fields in our form, simply display their label and their actual input field. Then, we add a submit button that says "Register". 
+
+Something interesting you may note is the use of the `csrf_token`. CSRF stands for cross-site registration forgery; it can do damage to your website by allowing people from other sites to post things to your website maliciously. To do that, we use what's called a token that can only be uniquely identified for our application. To do that, add the following config lines at the top of our `app.py` file:
+
+```python
+app.config['SECRET_KEY'] = '<insert random string>'
+app.config['WTF_CSRF_ENABLED'] = True
+```
+
+Pick your own secret key, but make sure it's long and unique.
+
+(NOTE: You will have to add `redirect` to the top `from flask` import statement.)
+
+Try going to `localhost:5000/register`. It should look something like this:
+
+![Register](https://dl.dropboxusercontent.com/s/j7ggzjyj7jyyvo3/register.png)
+
+Fill out the form and press register; if all goes according to plan, you should be redirected to the `/login` page, which should give you a 404 error. Let's page that page now.
+
+<a id="login"></a>
+### 5.2.3 Creating a Login Page
+The login page should end up looking quite similar to the registration page. However, on the backend, we'll need to make a couple changes; we'll need to login a user, rather than saving a new user to our database. For this, we'll make use of the `FlaskLogin` material we configured in the last step.
+
+Create a new route for `/login`. Your function should look like this:
+
+```python
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+  form = UserForm(request.form)
+  if request.method == 'POST' and form.validate():
+    user = User(name=form.name.data,password=form.password.data)
+    login_user(user)
+    return redirect('/search')
+
+  return render_template('login.html', form=form)
+```
+
+Just like last time, we create a new `UserForm` (we can reuse the form because, just like registration, it takes a username and password). If our form validates, we create a new user object given our username and password. Then, in a very important line, we call the `FlaskLogin` built-in function `login_user` (you'll need to add `login_user` in our `from flask.ext.login` line). This function will make use of the other methods we already implemented (`is_authenticated`, `get_id`, etc.); if it's successful, we'll continue in our execution, and if not, `FlaskLogin` will throw an error.
+
+In the case that we have a successful login, we'll be redirected to our `/search` page, which is the app's homepage. In the case where we haven't posted yet, we'll render `login.html`, a new template you should create. Its code will look like this:
+
+```html
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block body %}
+<h2>Login</h2>
+
+<form action="" method="POST">
+  {{ form.csrf_token }}
+  <div>
+    {{ form.name.label}}
+    {{ form.name }}
+  </div>
+  <div>
+    {{ form.password.label }}
+    {{ form.password }}
+  </div>
+  <input type="submit" value="Login">
+</form>
+{% endblock %}
+```
+
+The page will look like very similar to our registration page. Try logging in, and you should see the search page.
+
+<a id="logout"></a>
+### 5.2.4 Adding Logout
+Logout is easier, because we don't need a dedicated page. Let's make a `/logout` route that, when visited, will simply log a user out:
+
+```python
+@app.route("/logout")
+def logout():
+    logout_user()
+    return redirect("/")
+```
+
+After you add the `logout_user` function to your `flask.ext.login` import statement, you should be able to logout and return to the homepage.
+
+<a id="personal-favs"></a>>
+## 5.3 Personalizing Favorites
+Now that we have user accounts that we can register and log in and out of, it's time to finish off the job. Let's use the accounts we've created to make sure every user gets her own favorite reading list.
+
+<a id="login_required"></a>
+### 5.3.1 Using `@login_required`
+A pretty useful decorator can help us to make favorites personalized. Any page that you want to be blocked to users that are not logged in can be blocked by simply adding this decorator. For example, let's make it such that only users who are logged in can access the `/search` page. To do that, I just change the function definition to look as follows:
+
+```python
+@app.route("/search", methods=["POST", "GET"])
+@login_required
+def search():
+```
+
+First, go to `localhost:5000/logout` to make sure you're logged out. Then, try going to `localhost:5000/search`; you should see a screen like this:
+
+![Unauthorized](https://dl.dropboxusercontent.com/s/lwrcmm9sh5zduue/unauth.png)
+
+This is great! We won't need to start every route we write with an if statement to see if a user is logged in. This is also a big step to making our data sensitive between users. For fullness' sake, add the `@login_required` decorator to `/favorite/<id>` and `/favorites` as well; those pages only make sense if we have a user.
+
+(NOTE: per usual, remember you'll have to import the `login_required` decorator.)
+
+<a id="add_user_fav"></a>
+### 5.3.2 Adding `User` to `FavoriteBook`
+If we think back to our `FavoriteBook` model, we had three attributes: title, author, and link. However, this model pays no attention to who marked it as a favorite. Now that we have the user accounts to support this, we should remember whose favorite book it is. Let's do that by editing the model:
+
+```python
+class User(db.Document):
+  name = db.StringField(required=True,unique=True)
+  password = db.StringField(required=True)
+  def is_authenticated(self):
+    users = User.objects(name=self.name, password=self.password)
+    return len(users) != 0
+  def is_active(self):
+    return True
+  def is_anonymous(self):
+    return False
+  def get_id(self):
+    return self.name
+
+class FavoriteBook(db.Document):
+  author = db.StringField(required=True)
+  title = db.StringField(required=True)
+  link = db.StringField(required=True)
+  poster = db.ReferenceField(User)
+```
+
+Our two models will now look like this. You'll notice, at the bottom we added `poster = db.ReferenceField(User)`. A `ReferenceField` object, as you might guess, references another type of object. In this case, we pass in a `User` object; there will be a user associated with each `FavoriteBook`, and we'll call that user the poster.
+
+Just for the sake of emptying out old data, let's remove all the favorite books we have thus far; they don't have posters attached, so it'll be bad when we don't have any user account to show them in.
+
+To do this, let's open the Mongo shell. The shell is essentially a way to perform all the different commands we've been running, like `FavoriteBook.objects()`, but in a command-line interface. To start, simply type `mongo` to open up this shell. After it was open, I typed the following commands to remove all my previously recorded `FavoriteBook` items:
+
+```bash
+$ use books
+switched to db books
+$ db.favorite_book.remove({})
+WriteResult({ "nRemoved" : 2 })
+```
+
+First, we switch to our `books` database, which is the name we previously provided in the Flask config. Then, we remove the `favorite_book` items we already have stored; you'll see I removed 2. To read more about the Mongo shell (you should! it's awesome!), visit [this website][mongo-shell].
+
+Now that we've removed all our old data, let's update `/favorite/<id>` to provide our `poster` object, so we know each favorite book has a user associated with it:
+
+```python
+@app.route("/favorite/<id>")
+@login_required
+def favorite(id):
+  book_url = "https://www.googleapis.com/books/v1/volumes/" + id
+  book_dict = requests.get(book_url).json()
+  poster = User.objects(name=current_user.name).first()
+  new_fav = FavoriteBook(author=book_dict["volumeInfo"]["authors"][0], title=book_dict["volumeInfo"]["title"], link=book_url, poster=poster)
+  new_fav.save()
+  return render_template("confirm.html", api_data=book_dict)
+```
+
+Basically everything stays the same, except we query for the current user object with the call `User.objects(name=current_user.name).first()`. Be sure to import `current_user`, as it's a built-in variable for `FlaskLogin`. We can be sure to return `first()` because login is required on this page, which means that we will certainly have a user of the name of the currently logged-in user.
+
+Try adding a few favorite books to your account; if everything works normally, then that means we're very close.
+
+<a id="change_fav_page"></a>
+### 5.3.3 Changing our Favorites Page
+Now, let's make the final changes to our `/favorites` page so that we only see favorite books posted by our own account. For the `/favorites` route, let's change the function to look as follows:
+
+```python
+@app.route("/favorites")
+@login_required
+def favorites():
+  current_poster = User.objects(name=current_user.name).first()
+  favorites = FavoriteBook.objects(poster=current_poster`)
+  return render_template("favorites.html", current_user=current_user, favorites=favorites)
+```
+
+With one small tweak, we only load the `FavoriteBook` objects who have the poster equal to the current user. Then, to add a little bit more detail, we pass the `current_user` object to the template; that way, we can make our page a little bit more personalized.
+
+In `favorites.html`, we changed the `<h1>` line so that it looks like this:
+
+```html
+<h1>{{current_user.name}}'s Favorites</h1>
+```
+
+This way, we can access the name of the current user and show that to the user. 
+To view our finalized product, check out my personalized page, after I added a few favorites:
+
+![Personalized Recommendations](https://dl.dropboxusercontent.com/s/7z9vv03tpydvwvk/personalfaves.png)
 
 <a href="#top" class="top" id="additionalresources">Top</a>
 ## Additional Resources
@@ -2541,6 +2864,13 @@ Along with this tutorial, there is a wealth of information available on Python a
 [nosql]: http://nosql-database.org/
 [flask-mongoengine]: http://flask-mongoengine.readthedocs.org/en/latest/
 [database-model]: https://en.wikipedia.org/wiki/Database_model
+
+<!-- login -->
+[what-are-sessions]: http://stackoverflow.com/questions/3804209/what-are-sessions-how-do-they-work
+[flask-login]: https://flask-login.readthedocs.org/en/latest/
+[wtforms]: https://wtforms.readthedocs.org/en/latest/
+[mongo-shell]: https://docs.mongodb.org/manual/reference/mongo-shell/
+
 
 <!-- tools -->
 [curl-win]: http://curl.haxx.se/download.html
