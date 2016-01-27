@@ -3,7 +3,7 @@
 
 *Learn web development with Flask.*
 
-Written and developed by Dan, [Raymond](http://www.raymondxu.io), Matt, and [ADI](http://www.adicu.com).
+Written and developed by Dan, [Raymond](http://www.raymondxu.io), [Matt](http://mattpic.com), and [ADI](http://www.adicu.com).
 
 <a href="#top" class="top" id="getting-started">Top</a>
 ## About This Document
@@ -66,7 +66,16 @@ Basic knowledge of the Python programming language is suggested. If you don't al
 		-	[3.3.1 Template Variables Using Jinja2](#template-variables-using-jinja2)
 		-	[3.3.2 Extending Templates](#extending-templates)
 		-	[3.3.3 Base Templates and Style](#base-templates-and-style)
--	[Level 4: Storing Data: Databases](#level4)
+-	[Level 4: Storing Favorites: Databases](#level4)
+	- [4.1 Using MongoDB](#mongo-db)
+		-	[4.1.1 What is MongoDB?](#what-mongo)
+		-	[4.1.2 Using Flask-Mongoengine](#flask-mongo)
+	- [4.2 Adding a Model](#model)
+		-	[4.2.1 Creating a `FavoriteBook` Model](#fav-book)
+		-	[4.2.2 Creating and Saving Objects](#create-save)
+	- [4.3 Viewing Favorites](#view-fav)
+		-	[4.3.1 Querying for Objects](#query-obj)
+		-	[4.3.2 Presenting a List](#list-obj)
 -	[Level 5: User Sessions](#level5)
 -   [Additional Resources](#additionalresources)
 
@@ -1356,7 +1365,6 @@ Great! Now we have a basic landing page styled using CSS and foundation. We will
 <a href="#top" class="top" id="level3">Top</a>
 ## Level 3: Adding Search Functionality: APIs
 
-
 <a href="#top" class="top" id="api-basics">Top</a>
 ## 3.1 API Basics
 
@@ -2240,8 +2248,175 @@ As an exercise, wrap each `{{ }}` statement in a Jinja2 `{% if %}`, checking if 
 
 
 <a href="#top" class="top" id="level4">Top</a>
-## Level 4: Databases
+## Level 4: Storing Favorites: Databases
+Right now, our website allows us to search for books. However, it would be nice if we had a way to save books that looked interesting. Let's work on adding a "Favorites" feature, which will allow us to mark our favorite books.
 
+<a id="mongo-db"></a>
+## 4.1 Using MongoDB
+To store favorites for our application, we're going to be used a database called MongoDB.
+
+<a id="what-database"></a>
+### 4.1.1 What is a database?
+In order to store favorites for our app, we'll need to be use a database. A [database][database] is essentially just an organized collection of data. The data can be anything: bank transactions, songs, restaurant reservations, anything. As long as you have an organized way of representing it, you can store it.
+
+They are incredibly common; almost every application that you have every used probably has a database to store some kind of data. There's a lot of things you can do with a database, but for this tutorial we'll only focus on the basics, which can be remembered by the [CRUD][crud] acronym: create, read, update, and delete.
+
+<a id="mongo-db"></a>
+### 4.1.2 What is MongoDB?
+There are several different kinds of databases you may have heard of. Some common ones are [MySQL][mysql], [Oracle][oracle], and [PostgreSQL][postgresql]. However, the one that we're going to be using is **MongoDB**. [Mongo][mongodb], as it is more commonly known, will allow us to quickly and easily start storing data, which will great for our purposes.
+
+MongoDB is what's called a [NoSQL](nosql) database, which means data isn't stored in the common SQL formatting. Think of SQL data like rows in a spreadsheet: there's a header value for each column of the spreadsheet, and the rows of each spreadsheet provide a value for each of the columns. NoSQL data doesn't use this kind of storage; instead, each object is stored as its own chunk of data and doesn't relate to the other rows in the same way.
+
+<a id="flask-mongo"></a>
+### 4.1.3 Using Flask-Mongoengine
+To use MongoDB, Flask provides a really nice add-on called [`Flask-Mongoengine`][flask-mongoengine], which allows us to perform our CRUD operations directly from our Flask app.
+
+To get started using it, first install MongoDB; if you're inside your Vagrant box, you should follow the instruction guide for Ubuntu available [here][mongo-download-linux] (NOTE: if you're not inside your box, installation guides for other operating systems are available [here][mongo-download-general]).
+
+Once you've done that, we'll need to install `Flask-Mongoengine`. To do that, run the following command:
+
+```bash
+$ sudo pip install flask-mongoengine
+```
+
+Now that we have our database and Flask library ready to go, let's create a database object for our app to use. Add the following code at the top of your `app.py` file:
+
+```python
+from flask.ext.mongoengine import MongoEngine
+...
+app.config['MONGODB_SETTINGS'] = { 'db' : 'books' }
+...
+db = MongoEngine(app)
+```
+
+The import statement, below your other import statement, simply the `MongoEngine` object, which is the basic object we'll be using for our app. Next, below our other `app.config` changes, we'll add the settings for MongoDB: basically, we just say the database that we'll be using will be called "books". Next, we create an instance of our MongoEngine class, which we'll use later.
+
+<a id="model"></a>
+## 4.2 Adding a Model
+Now that we have our database all set-up, we need to specify what kind of data we're going to be storing. Generally, to specify this, we create a [database model][database-model], which determines what our data is and how it will be stored. Let's work on creating our model.
+
+<a id="fav-book"></a>
+### 4.2.1 Creating a `FavoriteBook` Model
+Since we're storing books that we're marking as favorites, let's create a model called `FavoriteBook`. To store this, we're going to need three things: the author's name, the name of the book, and the link to the book. We can include all of those things in our model.
+
+In your `app.py` file, just below the line in which we instantiate `db`, add the following code to create our model:
+
+```python
+class FavoriteBook(db.Document):
+    author = db.StringField(required=True)
+    title = db.StringField(required=True)
+    link = db.StringField(required=True)
+```
+
+(NOTE: generally it's best to not keep models in the same file as all your other logic. We could've also created a new file called `models.py` and put our code there. However, for the sake of this tutorial, we only have one model, so it makes sense to keep it all in the same file.)
+
+<a id="create-save"></a>
+### 4.2.2 Creating and Saving Objects
+Now that we have our model created, we're going to want to actually create a model to save a model as a favorite. To do that, let's first add a button to each of our search results. Below the `h5` tag that shows our authors, add the following code to provide a link to do so:
+
+```html
+<a href="/favorite/{{ book.volumeInfo.id }}">Add to favorites</a>
+```
+
+Our search page should now look like this:
+
+![Add to Favs](https://dl.dropboxusercontent.com/s/xlzxfdvjdahkan4/add-to-favs.png)
+
+You'll notice that our link refers to a new route called `favorite` - to it, we pass the id of the book as a parameter so we know what book we're adding to favorites. Try clicking on the link; you should get a 404 error. That's because we haven't created the `/favorite` endpoint yet. Let's do that now!
+
+In our `app.py` file, create a new route and function that looks as follows:
+
+```python
+@app.route("/favorite/<id>")
+def favorite(id):
+```
+
+You'll notice `<id>` in the URL route we're intercepting. This is a really cool feature Flask includes; it allows us to take variable parts of a URL and pass them to our route function. So when we pass the ID of the book as to the URL, like we did above, we'll get it as a parameter passes to our function. So, for example, if Flask intercept the route `/favorite/12345`, when our function is called, `id` will equal `12345`; this allows us to customize what our function does depending on whatever is passed into us.
+
+Now that we have access to our book ID, let's create our model and save it to our database! The following code, added to our `favorite` function, should do it:
+
+```python
+book_url = "https://www.googleapis.com/books/v1/volumes/" + id
+book_dict = requests.get(book_url).json()
+new_fav = FavoriteBook(author=book_dict["volumeInfo"]["authors"][0], title=book_dict["volumeInfo"]["title"], link=book_url)
+new_fav.save()
+return render_template("confirm.html", api_data=book_dict)
+```
+
+First, we create the URL for our book, which just appends the ID to our base URL. Then, we query the API with the link, so we have all the information we need. Next, we create our new model; we pass the info from our API results, taking the first author's name, the title of the book, and the Google Books URL. Once we've done this, all we need to is called `.save()` on our newly created object, and it is saved to our database. It's that easy! Simply create a new object using our default constructor and call the `save()` method, and our data will be persisted to MongoDB.
+
+Finally, we pass our book data to a new template called `confirm.html`; create that now to provide a page that confirms that our book was added to favorites. Create a new file called `confirm.html` and add this to it:
+
+```html
+{% extends "base.html" %}
+{% block title %} Favorite Added {% endblock %}
+{% block body %}
+    <h1>Reading List App</h1>
+    <p>Thanks for adding {{api_data.volumeInfo.title}} to your favorites.</p>
+    <a href="/favorites"><button class="launch-button">View Favorites</button></a>
+{% endblock %}
+```
+
+Once we do this, you should see a screen that looks something like this:
+
+![Fav Confirm](https://dl.dropboxusercontent.com/s/xgzk1ldkcfvziq0/fav-add.png)
+
+Now that we're done, we're all done with the functionality to add books to our favorites!
+
+<a id="view-fav"></a>
+## 4.3 Viewing Favorites
+Now that we've started adding books to our favorites, we'll need a screen to view all the books we've already added to favorites. We'll build that now.
+
+<a id="query-obj"></a>
+### 4.3.1 Querying for Objects
+We've already seen how to create objects; now, we'll need a way to pull objects out of our database. The code for that will look as follows:
+
+```
+books = FavoriteBook.objects()
+```
+
+It's as simple as that; to get all the `FavoriteBook` objects we have stored, all we have to do is call the `objects()` function. We can optionally pass checks we want to do as parameters to this function call. For example, say we want to see whether the user has favorited `Great Expectations`, we could say `book = FavoriteBook.objects(title='Great Expectations')`, which would only return the book (or books) that have that as the title. In our case, however, we'll want all of the books.
+
+<a id="list-obj"></a>
+### 4.3.2 Presenting a List of Favorites
+You may have noticed that, in our `confirm.html` template, we added a button to allow us to see the list of favorites we've created thus far. For that, we added an endpoint `/favorites`, which will be our list of books we've identified as favorites. We're going to handle that endpoint now.
+
+To your `app.py` file, add a route at the bottom, as follows:
+
+```python
+@app.route("/favorites")
+def favorites():
+  favorites = FavoriteBook.objects()
+  return render_template("favorites.html", favorites=favorites)
+```
+
+As you'll see, the code is quite simple. We just query for all of our `FavoriteBook` objects, as we did above, and then pass them to a template called `favorites.html`. We'll need to create that file, so create a new file with that name in the `templates/` directory. It should look as follows:
+
+```html
+{% extends "base.html" %}
+{% block title %}Favorites{% endblock %}
+{% block body %}
+<h1>Favorites</h1>
+{% if favorites|length > 0 %}
+    <ul>
+    {% for fav in favorites  %}
+        <li>
+            <a href={{ fav.link }}><h3>{{ fav.title }}</h3></a>
+            <h5><ul>{{ fav.author }}</ul></h5>
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>You haven't added any favorites yet.</p>
+{% endif %}
+{% endblock %}
+```
+
+The template looks pretty similar to results. We show a list of each of the favorites, or if there are zero favorites then we show that message. Then, just as we did for the JSON objects, we can refer to the attributes of our model with the Python dot syntax. Thus, to show the title of a book, we simply say `fav.title` inside the template.
+
+Try adding some books to your favorites. Your page should look something like this:
+
+![Favorites List](https://dl.dropboxusercontent.com/s/fei3c94d2bh2v9f/favorites.png)
 
 <a href="#top" class="top" id="level5">Top</a>
 ## Level 5: User Sessions
@@ -2353,6 +2528,19 @@ Along with this tutorial, there is a wealth of information available on Python a
 [foundation-forms]: http://foundation.zurb.com/docs/components/forms.html
 [foundation-lists]: http://foundation.zurb.com/docs/components/typography.html#lists
 [foundation-small]: http://foundation.zurb.com/docs/components/typography.html#small-header-segments
+
+<!-- favorites -->
+[database]: https://en.wikipedia.org/wiki/Database
+[mysql]: https://www.mysql.com/
+[oracle]: https://www.oracle.com/database/index.html
+[postgresql]: http://www.postgresql.org/
+[mongodb]: https://www.mongodb.org/
+[mongo-download-linux]: https://docs.mongodb.org/v3.0/tutorial/install-mongodb-on-ubuntu/
+[mongo-download-general]: https://docs.mongodb.org/v3.0/installation/#installation-guides
+[crud]: https://docs.mongodb.org/manual/crud/
+[nosql]: http://nosql-database.org/
+[flask-mongoengine]: http://flask-mongoengine.readthedocs.org/en/latest/
+[database-model]: https://en.wikipedia.org/wiki/Database_model
 
 <!-- tools -->
 [curl-win]: http://curl.haxx.se/download.html
