@@ -86,6 +86,7 @@ Basic knowledge of the Python programming language is suggested. If you don't al
 		-	[5.2.2 Creating a Registration Page](#register)
 		-	[5.2.3 Creating a Login Page](#login)
 		-	[5.2.4 Adding Logout](#logout)
+		-	[5.2.5 Adding Home Page Buttons](#homepage-but)
 	-	[5.3 Personalizing Favorites](#personal-favs)
 		-	[5.3.1 Using `@login_required`](#login_required)
 		-	[5.3.2 Adding `User` to `FavoriteBook`](#add_user_fav)
@@ -2638,6 +2639,23 @@ def logout():
 ```
 
 After you add the `logout_user` function to your `flask.ext.login` import statement, you should be able to logout and return to the homepage.
+
+<a id="homepage-but"></a>
+### 5.2.5 Adding Home Page Buttons
+Now that we have registration and login options, let's show our users how to get to them. We can do this by changing the buttons on our home page.
+
+Open up `hello.html`. Currently, we have a button that says "Enter App":
+
+```html
+<a href="/search"><button class="launch-button">Launch App</button></a>
+```
+
+Let's remove this code, adding in its place two buttons, one for register and one for login:
+
+```html
+<a href="/login"><button class="launch-button">Login</button></a>
+<a href="/register"><button class="launch-button">Register</button></a>
+```
 
 <a id="personal-favs"></a>>
 ## 5.3 Personalizing Favorites
