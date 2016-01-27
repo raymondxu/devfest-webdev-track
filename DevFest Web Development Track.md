@@ -3,7 +3,7 @@
 
 *Learn web development with Flask.*
 
-Written and developed by Dan, [Raymond](http://www.raymondxu.io), Matt, and [ADI](http://www.adicu.com).
+Written and developed by [Dan](http//www.schlosser.io), [Raymond](http://www.raymondxu.io), Matt, and [ADI](http://www.adicu.com).
 
 <a href="#top" class="top" id="getting-started">Top</a>
 ## About This Document
@@ -81,7 +81,7 @@ Before we get started, set up your environment using [this guide](http://learn.a
 <a href="#top" class="top" id="level1">Top</a>
 ## Level 1: Making Web Pages: Flask and HTML
 
-Let's begin by creating the web page for our reading list app. Before we do so, we need to learn about Flask.
+A natural way to start is by creating a web page for our reading list app. Before we do so, we need to learn about Flask.
 
 <a href="#top" class="top" id="what-is-flask">Top</a>
 ## 1.1 What is Flask
@@ -122,6 +122,8 @@ This is a very basic directory structure for a Flask webapp.
 
 <a href="#top" class="top" id="hello-world-in-flask">Top</a>
 ## 1.2 Hello World in Flask
+
+Download the starter code for level 1.
 
 In order to write our first Flask app, we only need to edit one file: `app.py`.  It's that easy!
 
@@ -238,9 +240,7 @@ def name():
 
 Save.  With your server [running](#running-a-flask-app) or [reloaded](#developing-with-flask),  point your browser to `"http://localhost:5000/name"` and your name will appear!  Our `/name` route is static, because it returns the same string every time.
 
-Now, make another static route accessible at `http://localhost:5000/website` that returns the URL of your Github, Twitter, or personal website (don't forget the `http://`!). We'll use this route later.
-
-> We won't show the code for the website route here, but it's implementation is in the sample code for your reference.
+Now, as an exercise, make another static route accessible at `http://localhost:5000/website` that returns the URL of your Github, Twitter, or personal website (don't forget the `http://`!).
 
 <a id="dynamic-routes"></a>
 ### 1.3.2 Dynamic Routes
@@ -273,6 +273,8 @@ Save and reload your server as needed, and navigate to `http://localhost:5000/se
 
 <a href="#top" class="top" id="html-basics">Top</a>
 ## 1.4 HTML Basics
+
+Now that we've covered basic routes in Flask, we can take a look at HTML.
 
 <a id="what-is-html"></a>
 ### 1.4.1 What is HTML
@@ -487,7 +489,7 @@ Except the `<DOCTYPE>` tag, all of these elements should be children of the `<he
 <a id="a-simple-example-hello-html"></a>
 ### 1.4.4 The Landing Page
 
-Let's turn `hello.html` into the landing page for our app!
+Let's turn `hello.html` into the landing page for our app! Replace its contents with this:
 
 ```html
 <!DOCTYPE html>
@@ -506,7 +508,7 @@ Let's turn `hello.html` into the landing page for our app!
 Flask uses something called templates to make writing HTML more modular. We will go in-depth on templating in [a later section](#displaying-search-results), but let's set up a simple HTML page here. Let's make our Flask app return `hello.html` as a template.  First,  move `hello.html` into the `templates` folder.  Then, in `app.py`, import `render_template` from the `flask` package:
 
 ```python
-from flask import Flask, jsonify, render_template
+from flask import Flask, render_template
 import requests
 ...
 ```
@@ -530,7 +532,7 @@ Reload the server and visit `localhost:5000`.  You'll see `hello.html`, but this
 
 Now let's write the web page where users can search for books!
 
-First start by creating a template called `search.html` in the `templates` folder like such:
+First start by creating a file called `search.html` in the `/templates` folder like such:
 
 ```html
 <!DOCTYPE html>
@@ -555,7 +557,7 @@ The first thing we should do is add a title to the search page. We'll use `<h1>`
 ...
 ```
 
-Now, lets create a web form, that allows users to enter a search query and click search.  We'll make a very simple search form (following guidelines from [MDN][mdn-form-usage]).  Start with a `<form>` element.  We fill out the `action` and `method` attributes in accordance with HTML5 standards.
+Now, let's create a web form that allows users to enter a search query and click a button to execute the search.  We'll make a very simple search form (following guidelines from [MDN][mdn-form-usage]).  Start with a `<form>` element.  We fill out the `action` and `method` attributes in accordance with HTML5 standards.
 
 ```html
 ...
@@ -607,9 +609,7 @@ Now we have our completed `search.html`:
 
 Right now the search button doesn't do anything, but we will add functionality to it in [Level 3](#level3).
 
-Let's connect our landing page (`hello.html`) to our search page (`search.html`).
-
-To do so, we just need to add a button to `hello.html` that redirects to a `/search` route.
+In the meantime, let's connect our landing page (`hello.html`) to our search page (`search.html`). To do so, we just need to add a button to `hello.html` that redirects to a route that will serve `search.html`.
 
 
 ```html
@@ -627,7 +627,7 @@ To do so, we just need to add a button to `hello.html` that redirects to a `/sea
 </html>
 ```
 
-Now we need to add the search route to `app.py`. Replace the old `/search/<search_query>` route with this:
+Note that the button is wrapped in an `href` to `/search`. This means that when you click on the button, it will take you from `localhost:5000` to `localhost:5000/search` (when running locally). Now we just need to write a search route in `app.py`. Replace the old `/search/<search_query>` route with this:
 
 ```python
 @app.route("/search")
@@ -1257,7 +1257,7 @@ Note that we also link to `css/app.css`, which is for CSS code specific to our a
 Now that you've learned the basics of CSS and Foundation, let's add some styling to our landing page!
 
 
-Let's first use Foundation to add some structure to the content! Modify `hello.html` to wrap the body's content in the `row`, `large-12 columns`, and `panel` classes.
+Let's first use Foundation to add some structure to the content. Modify `hello.html` to wrap the body's content in the `row`, `large-12 columns`, and `panel` classes.
 
 ```html
 ...
@@ -1350,7 +1350,7 @@ And in `search.html`:
 ...
 ```
 
-Great! Now we have a basic landing page styled using CSS and foundation. We will style the rest of our app after we finish implementing its functionality.
+Great! Now we have a basic landing page styled using CSS and foundation. We will style the rest of our app after we finish implementing functionality.
 
 
 <a href="#top" class="top" id="level3">Top</a>
@@ -1365,7 +1365,7 @@ This section will take a step aside from our Flask project to build a foundation
 <a id="rest-apis"></a>
 ### 3.1.1 REST APIs
 
-API's let us access external data in an easy, standardized way.  In the webapp world, when we say API we usually mean [REST (or RESTful) API][rest-api], which can be effectively thought of as an API that is accessible at a series of URL addresses. An extremely simple example of a REST API is [placekitten.com](http://placekitten.com), an API that serves images of kitten.  Here's how it works.  If you point your browser to `http://placekitten.com/<width>/<height>`, it returns a picture of a kitten with that width and height. If you go to `/g/<width>/<height>` the image will be grayscale.  Go to these urls to see a very basic REST API in action.
+APIs let us access external data in an easy, standardized way.  In the webapp world, when we say API we usually mean [REST (or RESTful) API][rest-api], which can be effectively thought of as an API that is accessible at a series of URL addresses. An extremely simple example of a REST API is [placekitten.com](http://placekitten.com), an API that serves images of kitten.  Here's how it works.  If you point your browser to `http://placekitten.com/<width>/<height>`, it returns a picture of a kitten with that width and height. If you go to `/g/<width>/<height>` the image will be grayscale.  Go to these urls to see a very basic REST API in action.
 
 URL | Image
 ------|-----
@@ -1790,7 +1790,7 @@ Adapting our Python code to work in our search route will be pretty simple, but 
 First, ensure that these imports are in your `app.py`.
 
 ```python
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, render_template, request
 import requests
 ...
 ```
