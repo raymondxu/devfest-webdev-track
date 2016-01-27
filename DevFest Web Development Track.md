@@ -2657,7 +2657,9 @@ Let's remove this code, adding in its place two buttons, one for register and on
 <a href="/register"><button class="launch-button">Register</button></a>
 ```
 
-<a id="personal-favs"></a>>
+![Register Button](https://dl.dropboxusercontent.com/s/ujlrckfs59ss80q/homescreen-register.png)
+
+<a id="personal-favs"></a>
 ## 5.3 Personalizing Favorites
 Now that we have user accounts that we can register and log in and out of, it's time to finish off the job. Let's use the accounts we've created to make sure every user gets her own favorite reading list.
 
