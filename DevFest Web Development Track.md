@@ -1,33 +1,27 @@
 <a id="top"></a>
 # DevFest Web Development Track
+*Learn web development by building a simple reading list app with Flask.*
 
-*Learn web development with Flask.*
-
-Written and developed by [Dan](http//www.schlosser.io), [Raymond](http://www.raymondxu.io), [Matt](http://mattpic.com), and [ADI](http://www.adicu.com).
+Written and developed by [Raymond Xu](http://www.raymondxu.io), [Matt Piccolella](http://mattpic.com), [Dan Schlosser](http://schlosser.io), and [ADI](http://www.adicu.com).
 
 <a href="#top" class="top" id="getting-started">Top</a>
-## About This Document
+# About This Document
 
-### Methodology
+## Methodology
+This guide will teach you fundamental concepts of web development by guiding you through the process of building a reading list app. We will begin by setting up a basic webpage in Flask, and then we'll incrementally add features level by level. After finishing this tutorial, you will have built a fully-functional reading list app that allows you to save a list of favorite books for each of your users.
 
-This guide will teach you fundamental web development concepts by guiding you through the process of building a reading list app. We will begin by setting up a basic webpage in Flask, and then incrementally add features level by level. After finishing this tutorial, you will have built a fully-functional reading list app where you can display a list of your favorite books.
-
-
-### Prerequisites
-
-Basic knowledge of the Python programming language is suggested. If you don't already know Python, check out [this ADI-developed tutorial](). No knowledge of HTML, CSS or Flask is expected or required.
-
+## Prerequisites
+Basic knowledge of the Python programming language is suggested. If you don't already know Python, check out [this ADI-developed tutorial][python-intro]. No knowledge of HTML, CSS or Flask is expected or required.
 
 <a href="#top" class="top" id="table-of-contents">Top</a>
-## Table of Contents
-
+# Table of Contents
 -	[Level 0: Environment Setup](#level0)
 -	[Level 1: Making Web Pages: Flask and HTML](#level1)
 	-	[1.1 What is Flask](#what-is-flask)
 		-	[1.1.1 How a Flask App Works](#how-a-flask-app-works)
 		-	[1.1.2 The Anatomy of a Flask App](#the-anatomy-of-a-flask-app)
 	-	[1.2 Hello World](#hello-world-in-flask)
-		-	[1.2.1 Editing app.py](#editing-app-py)
+		-	[1.2.1 Editing `app.py`](#editing-app-py)
 		-	[1.2.2 Running a Flask App](#running-a-flask-app)
 		-	[1.2.3 Developing with Flask](#developing-with-flask)
 	-	[1.3 Working with Routes](#working-with-routes)
@@ -86,6 +80,7 @@ Basic knowledge of the Python programming language is suggested. If you don't al
 		-	[5.2.2 Creating a Registration Page](#register)
 		-	[5.2.3 Creating a Login Page](#login)
 		-	[5.2.4 Adding Logout](#logout)
+		-	[5.2.5 Adding Home Page Buttons](#homepage-but)
 	-	[5.3 Personalizing Favorites](#personal-favs)
 		-	[5.3.1 Using `@login_required`](#login_required)
 		-	[5.3.2 Adding `User` to `FavoriteBook`](#add_user_fav)
@@ -93,33 +88,27 @@ Basic knowledge of the Python programming language is suggested. If you don't al
 
 ------------------------------
 <a href="#top" class="top" id="level0">Top</a>
-## Level 0: Environment Setup
-
+# Level 0: Environment Setup
 Before we get started, set up your environment using [this guide](http://learn.adicu.com/setup/).
 
-
 <a href="#top" class="top" id="level1">Top</a>
-## Level 1: Making Web Pages: Flask and HTML
-
-A natural way to start is by creating a web page for our reading list app. Before we do so, we need to learn about Flask.
+# Level 1: Making Web Pages: Flask and HTML
+Let's begin by creating the landing page for our reading list app. This will simply be the introductory screen for our app that will brief our users about what the app is for. Before we do so, we need to learn about Flask.
 
 <a href="#top" class="top" id="what-is-flask">Top</a>
 ## 1.1 What is Flask
-
-[Flask][flask] is a Python microframework.  Microframeworks are bare-bones, customizable tools that make it easy to build web apps, and Flask lets us do this in Python.  It is very easy to setup and has excellent documentation on its [website][flask].
+[Flask][flask] is a Python microframework.  Microframeworks are bare-bones, customizable tools that make it easy to build web apps. Flask lets us do this in Python.  It is very easy to setup and has excellent documentation on its [website][flask]; feel free to dig around! There's lots of awesome stuff to read about on their site.
 
 <a id="how-a-flask-app-works"></a>
 ### 1.1.1 How a Flask App Works
+Flask works with a [client-server model][client-server].  The server, written in Python, has functions that take requests from clients (i.e. web browsers) and return web content to be displayed by the client.  
 
-Flask works with a [client-server model][client-server].  The server, written in Python, has functions that take requests from clients (i.e. your web browser) and return web content to be displayed by the client.  
-
-Think about it like a restaurant:  The patron (the client, or web browser) gets their meal (the web page) by telling it to the waiter (the Flask server).  Then, depending on the order (the request), the waiter gives it to the cook (back-end functions, optional) and then the server returns the cooked meal to the patron. 
+Think about it like a restaurant:  The patron (the client, or web browser) gets their meal (the web page) by telling it to the waiter (the Flask server). Then, depending on the order (the request), the waiter gives it to the cook (back-end functions, optional) and then the server returns the cooked meal to the patron. 
 
 In addition to serving static pages (meals off the menu), Flask servers have the ability of serving [dynamic web pages][dynamic-content], or pages that are generated every time you load the page (made to order).  For example, dynamic content could be of such pages include information stored in a database or a user account.
 
 <a id="the-anatomy-of-a-flask-app"></a>
 ### 1.1.2 The Anatomy of a Flask App
-
 This is a very basic directory structure for a Flask webapp.
 
 	ProjectDirectory/
@@ -131,7 +120,7 @@ This is a very basic directory structure for a Flask webapp.
 	│   └── js/
 	└── templates/
 
--	`ProjectDirectory/` - Everything for your app goes in this folder.  Rename this to the name of your app.
+-	`ProjectDirectory/` - Everything for your app goes in this folder.  Rename this to the name of your app, so maybe `reading-list`, in our case.
 -	`app.py` - All of the Python/Flask code and server logic gets written in this file.
 -	`requirements.txt` - A list of all of the dependencies for your project.  See more about dependencies and installing them in [section 6.3 of our Python tutorial](http://adicu.com/intro-webdev/python/#pip).
 -	`static/` - This folder holds all your static files.  Static files include:
@@ -143,13 +132,12 @@ This is a very basic directory structure for a Flask webapp.
 <a href="#top" class="top" id="hello-world-in-flask">Top</a>
 ## 1.2 Hello World in Flask
 
-Download the starter code for level 1.
+Download the starter code for level 1 [here](https://github.com/RaymondXu/devfest-webdev-track-code/tree/level1) by clicking on the "Download ZIP" button. Make sure that you move your `Vagrantfile` and `bootstrap.sh` into the same directory as the code. For the rest of the tutorial, we'll assume that you're inside of your Vagrant box and editing your code with Sublime Text.
 
 In order to write our first Flask app, we only need to edit one file: `app.py`.  It's that easy!
 
 <a id="editing-app-py"></a>
-### 1.2.1 Editing app.py
-
+### 1.2.1 Editing `app.py`
 First, import the `Flask` class from the `flask` module.
 
 ```python
@@ -162,7 +150,7 @@ Then, construct the Flask `app` variable.  We'll pass around this variable whene
 app = Flask(__name__)
 ```
 
-Next, apply the `@app.route("/")` [decorator][decorators] to a function called `hello()`.  It returns just the string `"Hello World!"`.  By doing this, we are making a [route][route].  The `route()` decorator binds the URL `http://yourwebapp.com/` to this function, effectively adding a new page to your app.  Functions with the `route()` decorator can return text strings or HTML, and whatever is returned will be displayed by the client.
+Next, apply the `@app.route("/")` [decorator][decorators] to a function called `hello()`.  It returns just the string `"Hello World!"`.  By doing this, we are making a [route][route].  The `route()` decorator binds the URL `http://yourwebapp.com/` to this function, effectively adding a new page to your app.  Functions with the `route()` decorator can return text strings or HTML, and whatever is returned will be displayed by the client. 
 
 ```python
 @app.route("/")
@@ -194,7 +182,6 @@ if __name__ == "__main__":
 
 <a id="running-a-flask-app"></a>
 ### 1.2.2 Running a Flask App
-
 To run our Hello World app, just type the following command in the Project Directory folder:
 
 ```bash
@@ -213,7 +200,6 @@ Point your browser to that URL and bask in the awesomeness!
 
 <a id="developing-with-flask"></a>
 ### 1.2.3 Developing with Flask
-
 Flask is great for development.  It offers very helpful error messages and prints stack traces well in the browser, if instructed to.  To enable these debugging features and (more importantly) automatic reload, edit `app.py` and add a statement configuring the `app` object.
 
 ```python
@@ -307,7 +293,7 @@ Hello World!
 
 No funny business, just the two words.  If you open `hello.html` in your browser, you'll see it display `Hello World!`.  Congratulations on writing your first HTML document! Every text document can be interpreted as an HTML document (just add the `.html` extension!), but true HTML documents organize themselves in a structured way, using *elements*.
 
-##### Elements
+#### Elements
 
 Elements are made up of the *start tag*, the *content*, and the *end tag* (or *closing tag*). Both the start and end tags are wrapped in angle brackets (`< >`), and contain the element name inside them.  The end tag has slash (`/`) that immediately follows the open angle bracket.  Content of elements can be plain text, or even more HTML. Copy this example element into `hello.html`, and view it in your browser:
 
@@ -333,7 +319,7 @@ Hello World!
 
 If you reload `hello.html`, you should see that "really cool" is in italics, and "really" is also in bold.  Does that mean the the `<em>` is used to make words italic and `<strong>` is used to make them bold?  No.  Most web browsers have agreed that emphasis should be expressed using italics, and strong emphasis should be expressed with bold font, but as writers of HTML, we use tags to describe the purpose of the content, not to acheive the format that we see once they're applied.
 
-##### Headings
+#### Headings
 
 One rule of thumb for writing good HTML:  All text should be wrapped in tags, and the tags should be meaningful.  Right now, our `Hello World!` text has no tags around it, so let's figure out what tag makes the most sense.  "Hello World!" is the title of our `hello.html` web page, so we'll use the heading tags to indicate this.  The `<h1>`, `<h2>`, `<h3>`, `<h4>`, `<h5>`, and `<h6>` tags are used for headings and subheadings, `<h1>` being the highest level (and usually the largest), and `<h6>` being the lowest level (and usually the smallest).  Let's wrap our page title in `<h1>` tags.
 
@@ -344,7 +330,7 @@ One rule of thumb for writing good HTML:  All text should be wrapped in tags, an
 
 Reload `hello.html` and see the `<h1>` tag in action!  You might have an instinct to mess around with the different headings 1-6, and you should go ahead!  But remember this, we chose `<h1>` because "Hello World!" was the title of our webpage, not because we wanted it to be large.  So as you switch the `<h1>` tags to `<h2>`, remember that it wouldn't really make any sense to include an `<h2>` element in a website without an `<h1>` element, because that would mean a subheading without a heading.  From `<h2>` and down, headings should be interchanged depending on their importance.
 
-##### Attributes
+#### Attributes
 
 HTML elements can also have [attributes][attributes].  Attributes are key-value pairs that modify the contents of HTML elements, or provide additional information about the element itself.  For example, when we use the `<a>` tag to create an **a**nchor, or hyperlink, we have to provide the desitination in the `href` attribute.  Edit `hello.html`:
 
@@ -450,14 +436,14 @@ There are many HTML elements that you will use for your website.  There are some
 
 Please, please, please use MDN.  There is another site, called W3 schools (hyperlink intentionally excluded) that consistently turns up higher in Google search rankings, and consistently has incorrect, outdated, and more confusing information on the same topics.  If you have a question about web development (generally HTML, CSS, or JavaScript), just append "mdn" to the end of your search, to make sure that you get MDN as the top result.  The team at Mozilla has done an excellent job of making an excellent website that has the most up-to-date information about good web development practices. 
 
-##### Structure
+#### Structure
 -   `<html>` [(MDN)][mdn-html] - All HTML should be wrapped in the `<html>` element.  It should be the only element at the top level of an HTML document (except `<DOCTYPE>`).
 -   `<body>` [(MDN)][mdn-body] - Represents the content of the HTML document.  All visible elements are descendant from the `<body>` tag.
 -   `<head>` [(MDN)][mdn-head] - Holds all the metadata about the document.  This could include the title, charset, styling, and scripts
 -   `<div>` [(MDN)][mdn-div] - A general purpose container, to be used when no other element has semantic meaning.  Using [CSS](#css), `<div>` elements can be made to server all sorts of stylistic purposes.  There are [a lot of elements][mdn-elements] to choose from, so be sure that nothing else fits before using a `<div>`.  That said, you will find that you end up using `<div>` elements with some frequency.
 -   `<span>` [(MDN)][mdn-span] - Another general purpose container, but specifically for inline content.  For example, if you want to highlight misspelled words in a page, wrapping them in a span that has been configured to highlight its content would be the best solution.  Don't use a `<div>` when a `<span>` would be more appropriate.
 
-##### Text
+#### Text
 -   `<p>` [(MDN)][mdn-p] - A paragraph of text.  
 -   `<a>` [(MDN)][mdn-a] - A link, or anchor.  Be sure to always include the `href` attribute when using `<a>` tags.  If a link doesn't go anywhere, set the `href` attribute equal to `"#"`.
 -   `<h1> - <h6>` [(MDN)][mdn-h1-6] - Headers of various levels, `<h1>` being the highest level (like the title of an article or the title of the page), and `<h6>` being the most low level heading.  For [Search Engine Optimization (SEO)][seo] reasons, you should only include on `<h1>` tag on every page.
@@ -465,19 +451,19 @@ Please, please, please use MDN.  There is another site, called W3 schools (hyper
 -   `<strong>` [(MDN)][mdn-strong] - Strong emphasis.  Usage rules are similar for the `<em>` element.
 -   `<br>` [(MDN)][mdn-br] - For line breaks.  Using `<br>` tags is only really appropriate when writing a poem, address, or something else where line breakage is important.  Don't use this for the space between two paragraphs (just use two `<p>` tags!).
 
-##### Lists
+#### Lists
 -   `<ol>` [(MDN)][mdn-ol] - An ordered list.  Ordered lists should only contain list items (`<li>` elements).  Only use an `<ol>` when the order of the items in the list matters, like a recipe or instructions.
 -   `<ul>` [(MDN)][mdn-ul] - An unordered list.  Unordered lists should also only contain list items (`<li>` elements).  Use this when you have a list of similar items, but the order does not matter.  
 -   `<li>` [(MDN)][mdn-li] - An item in a `<ul>` or an `<ol>`.
 
-##### Forms
+#### Forms
 -   `<form>` [(MDN)][mdn-form] - A wrapper for any form that the user will fill out on the page. If you are making a web form, check out [this instructional guide][mdn-form-usage] from MDN on how to build a basic form.
 -   `<input>` [(MDN)][mdn-input] - An element that is used to input data into a form.  This could be a text-box, radio button, or an email address box depending on the attributes used.  Input tags are self closing, meaning that they don't have content or an end tag, and just take the form `<input />`.
 -   `<label>` [(MDN)][mdn-label] - A piece of text that labels an input.
 -   `<textarea>` [(MDN)][mdn-textarea] - A large, multiline text box that is part of a form.
 -   `<button>` [(MDN)][mdn-button] - Used for a button that submits or resets the form.
 
-##### Meta / Informational
+#### Meta / Informational
 
 Except the `<DOCTYPE>` tag, all of these elements should be children of the `<head>`.
 
@@ -490,7 +476,7 @@ Except the `<DOCTYPE>` tag, all of these elements should be children of the `<he
 -   `<style>` [(MDN)][mdn-style] - Embedded CSS style.  While it is better practice to use `<link>` to an external CSS file, it is also possible to include CSS content in a `<style>` element.
 -   `<title>` [(MDN)][mdn-title] - The title of your page.
 
-##### Other
+#### Other
 
 -   `<img>` [(MDN)][mdn-img] - Used to include an image on the page.  Always include the `src` attribute, the URL of the image resource, and the `alt` attribute to describe the image if for some reason the image cannot or should not be loaded.  The `<img>` element is self closing, like the `<input>` element.  We write it in the form `<img />`.  For example:
 ```html
@@ -546,6 +532,8 @@ def hello():
 ```
 
 Reload the server and visit `localhost:5000`.  You'll see `hello.html`, but this time rendered by Flask!
+
+![hello.html](../img/level1_hello.png)
 
 <a id="the-search-page"></a>
 ### 1.4.5 The Search Page
@@ -627,6 +615,8 @@ Now we have our completed `search.html`:
 </html>
 ```
 
+![search.html](../img/level1_search.png)
+
 Right now the search button doesn't do anything, but we will add functionality to it in [Level 3](#level3).
 
 In the meantime, let's connect our landing page (`hello.html`) to our search page (`search.html`). To do so, we just need to add a button to `hello.html` that redirects to a route that will serve `search.html`.
@@ -660,7 +650,7 @@ Try it out by going to `localhost:5000` and clicking the "Launch App" button!
 
 
 <a href="#top" class="top" id="level2">Top</a>
-## Level 2: Styling our App: CSS
+# Level 2: Styling our App: CSS
 
 Now that we have a basic landing page, let's add some styling to it so it doesn't look so bland!
 
@@ -1005,7 +995,7 @@ The most basic CSS property is `height` and `width`.  They change the size of th
 ```
 <h1 class="clear"></h1>
 
-![demo-height-width](img/demo-height-width.png)
+![demo-height-width](../img/demo-height-width.png)
 
 #### Borders
 
@@ -1044,13 +1034,13 @@ You can also give your elements borders.  To create a visible border, you need t
 ```
 <h1 class="clear"></h1>
 
-![demo-border](img/demo-border.png)
+![demo-border](../img/demo-border.png)
 
 #### Margin and Padding
 
 Setting the `margin` and `padding` attributes for an element creates space around it.  The content area (changed by the `height` and `width` properties) border, margin, and padding make up the *box model*.  
 
-![boxmodel](img/boxmodel.png)
+![boxmodel](../img/boxmodel.png)
 
 *Photo credit to the [MDN page on the box model][mdn-box-model].*
 
@@ -1114,7 +1104,7 @@ div {
 ```
 <h1 class="clear"></h1>
 
-![demo-margin-padding](img/demo-margin-padding.png)
+![demo-margin-padding](../img/demo-margin-padding.png)
 
 <a id="using-the-inspector"></a>
 ### 2.1.4 Using the Inspector
@@ -1372,9 +1362,10 @@ And in `search.html`:
 
 Great! Now we have a basic landing page styled using CSS and foundation. We will style the rest of our app after we finish implementing functionality.
 
+![style](../img/level2_hello.png)
 
 <a href="#top" class="top" id="level3">Top</a>
-## Level 3: Adding Search Functionality: APIs
+# Level 3: Adding Search Functionality: APIs
 
 <a href="#top" class="top" id="api-basics">Top</a>
 ## 3.1 API Basics
@@ -1736,7 +1727,7 @@ $ curl https://www.googleapis.com/books/v1/volumes?q=Treasure%20Island > respons
 > The `> response.json` section redirects all the output that would normally be sent to the console into the `response.json` file.
 
 You should now have a new file in your current directory named `response.json`.  If you open that file in your text editor, you'll see the response!
-r
+
 <a id="using-python"></a>
 ### 3.2.3 Using Python
 
@@ -1903,7 +1894,7 @@ perform a number of actions with it; a fun one is `.fadeOut()`. See more at the
 [jQuery API Documentation](http://api.jquery.com/).
 
 jQuery also lets you perform *AJAX* (Asynchronous JavaScript and XML) requests easily. This is a mechanism that your
-JavaScript can use to fetch new data without loading a new page (it's how your GMail inbox knows you have a new message
+JavaScript can use to fetch new data without loading a new page (it's how your Gmail inbox knows you have a new message
 without you refreshing the page). Create another file called `script.js` with the following lines:
 
 ```javascript
@@ -2217,13 +2208,15 @@ li {
 
 Check out the app now at `localhost:5000`!
 
+![results](../img/level3_results.png)
+
 
 <a id="templating-best-practices"></a>
 ### 3.2.5 Extension: Templating Best-Practices
 
 Our `results.html` template works, but there are some corner cases that we'd be good to cover.  We'll be addressing some issues with the user experience of our app.  Figuring out that you have user experience problems can be hard to do, but as a rule of thumb, give your app to a few friends and see what they think after using it.
 
-##### Empty search results
+#### Empty search results
 
 What if there are no results from the search?  The `items` list will be empty, and no `<li>` elements will be rendered.  Lets have a fall back.  Using the `{% if %}` control statement, we can check if the `items` list exists and isn't empty, and display a message indicating a lack of results otherwise.
 
@@ -2251,7 +2244,7 @@ What if there are no results from the search?  The `items` list will be empty, a
 {% endblock %}
 ```
 
-##### Missing Data Members
+#### Missing Data Members
 
 What if a book doesn't have an author listed?  Or the link is missing?  Whenever we use template variables, we should be sure that they exist first, lest the user see some ugly template error instead of your app.
 
@@ -2259,10 +2252,10 @@ As an exercise, wrap each `{{ }}` statement in a Jinja2 `{% if %}`, checking if 
 
 
 <a href="#top" class="top" id="level4">Top</a>
-## Level 4: Storing Favorites: Databases
+# Level 4: Storing Favorites: Databases
 Right now, our website allows us to search for books. However, it would be nice if we had a way to save books that looked interesting. Let's work on adding a "Favorites" feature, which will allow us to mark our favorite books.
 
-<a id="mongo-db"></a>
+<a href="#top" class="top" id="mongo-db">Top</a>
 ## 4.1 Using MongoDB
 To store favorites for our application, we're going to be used a database called MongoDB.
 
@@ -2272,7 +2265,7 @@ In order to store favorites for our app, we'll need to be use a database. A [dat
 
 They are incredibly common; almost every application that you have every used probably has a database to store some kind of data. There's a lot of things you can do with a database, but for this tutorial we'll only focus on the basics, which can be remembered by the [CRUD][crud] acronym: create, read, update, and delete.
 
-<a id="mongo-db"></a>
+<a id="what-mongo"></a>
 ### 4.1.2 What is MongoDB?
 There are several different kinds of databases you may have heard of. Some common ones are [MySQL][mysql], [Oracle][oracle], and [PostgreSQL][postgresql]. However, the one that we're going to be using is **MongoDB**. [Mongo][mongodb], as it is more commonly known, will allow us to quickly and easily start storing data, which will great for our purposes.
 
@@ -2300,9 +2293,9 @@ app.config['MONGODB_SETTINGS'] = { 'db' : 'books' }
 db = MongoEngine(app)
 ```
 
-The import statement, below your other import statement, simply the `MongoEngine` object, which is the basic object we'll be using for our app. Next, below our other `app.config` changes, we'll add the settings for MongoDB: basically, we just say the database that we'll be using will be called "books". Next, we create an instance of our MongoEngine class, which we'll use later.
+The import statement brings in the `MongoEngine` object, which is the basic object we'll be using for our app. Next, below our other `app.config` changes, we'll add the settings for MongoDB: basically, we just say the database that we'll be using will be called "books". Next, we create an instance of our MongoEngine class, which we'll use later.
 
-<a id="model"></a>
+<a href="#top" class="top" id="model">Top</a>
 ## 4.2 Adding a Model
 Now that we have our database all set-up, we need to specify what kind of data we're going to be storing. Generally, to specify this, we create a [database model][database-model], which determines what our data is and how it will be stored. Let's work on creating our model.
 
@@ -2374,7 +2367,7 @@ Once we do this, you should see a screen that looks something like this:
 
 Now that we're done, we're all done with the functionality to add books to our favorites!
 
-<a id="view-fav"></a>
+<a href="#top" class="top" id="view-fav">Top</a>
 ## 4.3 Viewing Favorites
 Now that we've started adding books to our favorites, we'll need a screen to view all the books we've already added to favorites. We'll build that now.
 
@@ -2430,10 +2423,10 @@ Try adding some books to your favorites. Your page should look something like th
 ![Favorites List](https://dl.dropboxusercontent.com/s/fei3c94d2bh2v9f/favorites.png)
 
 <a href="#top" class="top" id="level5">Top</a>
-## Level 5: Adding User-Specific Favorites: Sessions & Accounts
+# Level 5: Adding User-Specific Favorites: Sessions & Accounts
 If you add lots of favorites to your list, you'll notice it might get crowded. If you're going to have more than one user, it probably makes sense to have a favorites list for each user of your website; that way, different users can have different favorites. We're going to work on that in this section.
 
-<a id="flask-login"></a>
+<a href="#top" class="top" id="flask-login">Top</a>
 ## 5.1 Using `Flask-Login`
 Generally, to have users log in and out of your application, you need to use what's called a user session. The session, as this [Stack Overflow][what-are-sessions] answer describes, essentially passes data back and forth with every request, providing an id that only the client has access to. Generally, the passing of these id's can get pretty messy. Luckily, there's a great extension for Flask called [`Flask-Login`][flask-login] that makes handling these sessions much more manageable.
 
@@ -2503,7 +2496,7 @@ def load_user(name):
 
 Once we're done with this, we're all done creating our user objects, and `Flask-Login` should be all set to use.
 
-<a id="register_login"></a>
+<a href="#top" class="top" id="register_login">Top</a>
 ## 5.2 Handling Registration and Login
 There are two problems with our above `Flask-Login` situation: first, there's no page to sign-in, and second, there are no user accounts that we can sign into. To fix these problems, we'll need ways to register and login.
 
@@ -2639,7 +2632,26 @@ def logout():
 
 After you add the `logout_user` function to your `flask.ext.login` import statement, you should be able to logout and return to the homepage.
 
-<a id="personal-favs"></a>>
+<a id="homepage-but"></a>
+### 5.2.5 Adding Home Page Buttons
+Now that we have registration and login options, let's show our users how to get to them. We can do this by changing the buttons on our home page.
+
+Open up `hello.html`. Currently, we have a button that says "Enter App":
+
+```html
+<a href="/search"><button class="launch-button">Launch App</button></a>
+```
+
+Let's remove this code, adding in its place two buttons, one for register and one for login:
+
+```html
+<a href="/login"><button class="launch-button">Login</button></a>
+<a href="/register"><button class="launch-button">Register</button></a>
+```
+
+![Register Button](https://dl.dropboxusercontent.com/s/ujlrckfs59ss80q/homescreen-register.png)
+
+<a href="#top" class="top" id="personal-favs">Top</a>
 ## 5.3 Personalizing Favorites
 Now that we have user accounts that we can register and log in and out of, it's time to finish off the job. Let's use the accounts we've created to make sure every user gets her own favorite reading list.
 
@@ -2746,23 +2758,26 @@ To view our finalized product, check out my personalized page, after I added a f
 ![Personalized Recommendations](https://dl.dropboxusercontent.com/s/7z9vv03tpydvwvk/personalfaves.png)
 
 <a href="#top" class="top" id="additionalresources">Top</a>
-## Additional Resources
-
-Along with this tutorial, there is a wealth of information available on Python all across the web. Below are some good places to start:
+# Additional Resources
+Along with this tutorial, there is a wealth of information available on Python, Flask, and web development all across the web. Below are some good places to start:
 
 - [ADI Resources][learn]
 - [Codecademy][codecademy]
+- [Flask Documentation][flask]
+- [Flask Mega Tutorial][flask-mega]
+- [CSS Zen Garden][css-zen]
+- [Jinja Templates][jinja-templ]
 
-
+Thanks for reading!
 
 [github]: https://github.com/RaymondXu/devfest-webdev-track.git
 [learn]: http://adicu.com/learn
 [codecademy]: http://www.codecademy.com
 [adi]: http://adicu.com
+[flask-mega]: http://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world
+[css-zen]: http://www.csszengarden.com/
+[jinja-templ]: http://jinja.pocoo.org/
  
-
-
-
 <!-- python/flask -->
 [flask]: http://flask.pocoo.org/
 [route]: http://flask.pocoo.org/docs/quickstart/#routing
@@ -2777,6 +2792,7 @@ Along with this tutorial, there is a wealth of information available on Python a
 [jinja2]: http://jinja.pocoo.org/docs/templates/
 [jinja2-for]: http://jinja.pocoo.org/docs/templates/#for
 [jinja2-block]: http://jinja.pocoo.org/docs/templates/#template-inheritance
+[python-intro]: http://learn.adicu.com/python/
 
 <!-- google books api -->
 [google-books-docs]: https://developers.google.com/books/docs/v1/reference/
