@@ -69,7 +69,7 @@ Basic knowledge of the Python programming language is suggested. If you don't al
 		-	[4.2.2 Creating and Saving Objects](#create-save)
 	- 	[4.3 Viewing Favorites](#view-fav)
 		-	[4.3.1 Querying for Objects](#query-obj)
-		-	[4.3.2 Presenting a List](#list-obj)
+		-	[4.3.2 Presenting a List of Favorites](#list-obj)
 -	[Level 5: Adding User-Specific Favorites: Sessions & Accounts](#level5)
 	-	[5.1 Using `Flask-Login`](#flask-login)
 		-	[5.1.1 Installing `Flask-Login`](#install-login)
@@ -132,7 +132,7 @@ This is a very basic directory structure for a Flask webapp.
 <a href="#top" class="top" id="hello-world-in-flask">Top</a>
 ## 1.2 Hello World in Flask
 
-Download the starter code for level 1 [here](https://github.com/RaymondXu/devfest-webdev-track-code/tree/level1) by clicking on the "Download ZIP" button. Make sure that you move your `Vagrantfile` and `bootstrap.sh` into the same directory as the code. For the rest of the tutorial, we'll assume that you're inside of your Vagrant box and editing your code with Sublime Text.
+Download the starter code for level 1 [here](dl.dropboxusercontent.com/s/z7lpnxld4ew0nfi/level0-done.zip?dl=0). Make sure that you move your `Vagrantfile` and `bootstrap.sh` into the same directory as the code. For the rest of the tutorial, we'll assume that you're inside of your Vagrant box and editing your code with Sublime Text.
 
 In order to write our first Flask app, we only need to edit one file: `app.py`.  It's that easy!
 
@@ -651,6 +651,8 @@ Try it out by going to `localhost:5000` and clicking the "Launch App" button!
 
 <a href="#top" class="top" id="level2">Top</a>
 # Level 2: Styling our App: CSS
+
+If you have not completed the previous levels, download the starter code for level 2 [here](dl.dropboxusercontent.com/s/pyukm6lfyff1ldq/level1-done.zip?dl=0).
 
 Now that we have a basic landing page, let's add some styling to it so it doesn't look so bland!
 
@@ -1370,17 +1372,18 @@ Great! Now we have a basic landing page styled using CSS and foundation. We will
 <a href="#top" class="top" id="api-basics">Top</a>
 ## 3.1 API Basics
 
+If you have not completed the previous levels, download the starter code for level 3 [here](dl.dropboxusercontent.com/s/r6iobob0ilku4dk/level2-done.zip?dl=0).
+
 This section will take a step aside from our Flask project to build a foundation of knowledge around APIs and how they are used.  We will return to our app in [section 3.2](#google-books-api).
 
 <a id="rest-apis"></a>
 ### 3.1.1 REST APIs
 
-APIs let us access external data in an easy, standardized way.  In the webapp world, when we say API we usually mean [REST (or RESTful) API][rest-api], which can be effectively thought of as an API that is accessible at a series of URL addresses. An extremely simple example of a REST API is [placekitten.com](http://placekitten.com), an API that serves images of kitten.  Here's how it works.  If you point your browser to `http://placekitten.com/<width>/<height>`, it returns a picture of a kitten with that width and height. If you go to `/g/<width>/<height>` the image will be grayscale.  Go to these urls to see a very basic REST API in action.
+APIs let us access external data in an easy, standardized way.  In the webapp world, when we say API we usually mean [REST (or RESTful) API][rest-api], which can be effectively thought of as an API that is accessible at a series of URL addresses. An extremely simple example of a REST API is [placekitten.com](http://placekitten.com), an API that serves images of kitten.  Here's how it works.  If you point your browser to `http://placekitten.com/g/<width>/<height>`, it returns a picture of a kitten with that width and height in grayscale. Go to these urls to see a very basic REST API in action.
 
 URL | Image
 ------|-----
-[`http://placekitten.com/200/150`](http://placekitten.com/200/150) | ![http://placekitten.com/200/150](http://placekitten.com/200/150)
-[`http://placekitten.com/300/250`](http://placekitten.com/300/250) | ![http://placekitten.com/200/300](http://placekitten.com/300/250)
+[`http://placekitten.com/g/200/150`](http://placekitten.com/g/200/150) | ![http://placekitten.com/g/200/150](http://placekitten.com/g/200/150)
 [`http://placekitten.com/g/300/250`](http://placekitten.com/g/300/250) | ![http://placekitten.com/g/200/300](http://placekitten.com/g/300/250)
 
 The advantage in using a REST API here is that we don't need to remember the URL of the image we want, just the qualities (grayscale, 500x500).  Then, using the *documentation* provided at [placekitten.com](http://placekitten.com), we can derive the URL necessary to find the image we want.
@@ -1685,7 +1688,7 @@ browse the internet a little. Check out [here](http://www.example.com) for an ex
 <a href="#top" class="top" id="google-books-api">Top</a>
 ## 3.2 Google Books API
 
-In order to figure out whether or not someone has made the app that was searched for using our search route (started in [1.3.2](#dynamic-routes)), we'll use the Google Books API.  The first step for using any API is to familiarize yourself with its documentation, and so our first stop is [https://developers.google.com/books/docs/v1/reference/][google-books-docs].  We know that we want to search for books, so we'll focus on the ["Volume" section][google-books-docs-volume].
+In order to search for books using our search route (started in [1.3.2](#dynamic-routes)), we'll use the Google Books API.  The first step for using any API is to familiarize yourself with its documentation, and so our first stop is [https://developers.google.com/books/docs/v1/reference/][google-books-docs].  We know that we want to search for books, so we'll focus on the ["Volume" section][google-books-docs-volume].
 
 <a id="determining-the-request-url"></a>
 ### 3.2.1 Determining the Request URL
@@ -2253,6 +2256,9 @@ As an exercise, wrap each `{{ }}` statement in a Jinja2 `{% if %}`, checking if 
 
 <a href="#top" class="top" id="level4">Top</a>
 # Level 4: Storing Favorites: Databases
+
+If you have not completed the previous levels, download the starter code for level 4 [here](dl.dropboxusercontent.com/s/s69dlb4asw1ewxu/level3-done.zip?dl=0).
+
 Right now, our website allows us to search for books. However, it would be nice if we had a way to save books that looked interesting. Let's work on adding a "Favorites" feature, which will allow us to mark our favorite books.
 
 <a href="#top" class="top" id="mongo-db">Top</a>
@@ -2424,6 +2430,9 @@ Try adding some books to your favorites. Your page should look something like th
 
 <a href="#top" class="top" id="level5">Top</a>
 # Level 5: Adding User-Specific Favorites: Sessions & Accounts
+
+If you have not completed the previous levels, download the starter code for level 5 [here](dl.dropboxusercontent.com/s/7rvjhx7v5fn9rkp/level4-done.zip?dl=0).
+
 If you add lots of favorites to your list, you'll notice it might get crowded. If you're going to have more than one user, it probably makes sense to have a favorites list for each user of your website; that way, different users can have different favorites. We're going to work on that in this section.
 
 <a href="#top" class="top" id="flask-login">Top</a>
