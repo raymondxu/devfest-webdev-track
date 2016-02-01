@@ -104,7 +104,7 @@ Flask works with a [client-server model][client-server].  The server, written in
 
 Think about it like a restaurant:  The patron (the client, or web browser) gets their meal (the web page) by telling it to the waiter (the Flask server). Then, depending on the order (the request), the waiter gives it to the cook (back-end functions, optional) and then the server returns the cooked meal to the patron. 
 
-In addition to serving static pages (meals off the menu), Flask servers have the ability of serving [dynamic web pages][dynamic-content], or pages that are generated every time you load the page (made to order).  For example, dynamic content could be of such pages include information stored in a database or a user account.
+In addition to serving static pages (meals off the menu), Flask servers have the ability of serving [dynamic web pages][dynamic-content], or pages that are generated every time you load the page (made to order).  Dynamic content could include information stored in a database or a user account. For example, when you open Facebook, the news feed is different depending on who's account you are on and what posts your friends have shared.
 
 <a id="the-anatomy-of-a-flask-app"></a>
 ### 1.1.2 The Anatomy of a Flask App
@@ -190,12 +190,12 @@ $ python app.py
 If it's working, it should print the lines:
 
 ```bash
-* Running on http://127.0.0.1:5000/
+* Running on http://0.0.0.0:5000/
 ```
 
 Point your browser to that URL and bask in the awesomeness!
 
-> Wondering what that weird URL is?  `127.0.0.1` is the IP address for [localhost][localhost], or your local computer.  When we run a Flask server with `python app.py`, it is running only on your machine, not the internet.  The `:5000` bit is the [port][port], or specific place where your app is running.  Developing locally is much easier and safer than publishing your app to the internet every time you want to test something, and is considered good practice.  Also, instead of typing out `http://127.0.0.1:5000` every time you want to see your app, you can also point your browser to `http://localhost:5000`.  The two are equivalent.
+> Wondering what that weird URL is?  `0.0.0.0` lets all public IPs connect to the server.  When we run a Flask server with `python app.py`, it is running only on your machine, not the internet.  The `:5000` bit is the [port][port], or specific place where your app is running.  Developing locally is much easier and safer than publishing your app to the internet every time you want to test something, and is considered good practice.  Also, instead of typing out `http://0.0.0.1:5000` every time you want to see your app, you can also point your browser to `http://localhost:5000`. Try it out!
 
 <a id="developing-with-flask"></a>
 ### 1.2.3 Developing with Flask
@@ -245,7 +245,7 @@ def name():
 
 Save.  With your server [running](#running-a-flask-app) or [reloaded](#developing-with-flask),  point your browser to `"http://localhost:5000/name"` and your name will appear!  Our `/name` route is static, because it returns the same string every time.
 
-Now, as an exercise, make another static route accessible at `http://localhost:5000/website` that returns the URL of your Github, Twitter, or personal website (don't forget the `http://`!).
+Now, as an exercise, make another static route accessible at `http://localhost:5000/website` that returns the URL of your personal website or favorite website (don't forget the `http://`!).
 
 <a id="dynamic-routes"></a>
 ### 1.3.2 Dynamic Routes
@@ -316,7 +316,7 @@ Hello World!
 <p>This is a <em><strong>really</strong> cool</em> paragraph</p>
 ```
 
-If you reload `hello.html`, you should see that "really cool" is in italics, and "really" is also in bold.  Does that mean the the `<em>` is used to make words italic and `<strong>` is used to make them bold?  No.  Most web browsers have agreed that emphasis should be expressed using italics, and strong emphasis should be expressed with bold font, but as writers of HTML, we use tags to describe the purpose of the content, not to acheive the format that we see once they're applied.
+If you reload `hello.html`, you should see that "really cool" is in italics, and "really" is also in bold.  Does that mean the the `<em>` is used to make words italic and `<strong>` is used to make them bold?  No.  Most web browsers have agreed that emphasis should be expressed using italics, and strong emphasis should be expressed with bold font, but as writers of HTML, we use tags to describe the purpose of the content, not to achieve the format that we see once they're applied.
 
 #### Headings
 
@@ -331,7 +331,7 @@ Reload `hello.html` and see the `<h1>` tag in action!  You might have an instinc
 
 #### Attributes
 
-HTML elements can also have [attributes][attributes].  Attributes are key-value pairs that modify the contents of HTML elements, or provide additional information about the element itself.  For example, when we use the `<a>` tag to create an **a**nchor, or hyperlink, we have to provide the desitination in the `href` attribute.  Edit `hello.html`:
+HTML elements can also have [attributes][attributes].  Attributes are key-value pairs that modify the contents of HTML elements, or provide additional information about the element itself.  For example, when we use the `<a>` tag to create an **a**nchor, or hyperlink, we have to provide the destination in the `href` attribute.  Edit `hello.html`:
 
 ```html
 <h1>Hello World!</h1>
@@ -518,7 +518,7 @@ import requests
 ...
 ```
 
-The function `render_template()` turns templates in your `templates` folder into HTML that can be sent to the client.  For simple templates like `hello.html`, this method won't do more than just copy it into one big unicode string.
+The function `render_template()` turns templates in your `templates` folder into HTML that can be sent to the client.
 
 Now for our `/` route, we'll return the string that is created by calling `render_template()` on the name of the template file.
 
@@ -698,7 +698,7 @@ There is an extremely large collection of CSS properties and values, all of whic
 <a id=""></a>
 ### 2.1.1 Applying CSS Styles
 
-There are three ways to apply CSS to HTML elements.  The first is called *inline styling*.  Every element can be given a `style` attribute that can take CSS styles that apply to this element.  Doing this, we can avoid selectors entirely because all of our styling effects only the element that we are adding the `style` attribute to.  For example, this `<p>` tag will have blue text:
+There are three ways to apply CSS to HTML elements.  The first is called *inline styling*.  Every element can be given a `style` attribute that can take CSS styles that apply to this element.  Doing this, we can avoid selectors entirely because all of our styling affects only the element that we are adding the `style` attribute to.  For example, this `<p>` tag will have blue text:
 
 ```html
 <p style="color: blue">This text is blue.</p>
@@ -1954,7 +1954,7 @@ First, create an unordered list for the results.
 ...
 ```
 
-Next, we'll iterate over all of the repositories in the `items` list using Jinja2's [for loop syntax][jinja2-for], making a list item for each one.  We know to do this because of the JSON response structure we saw in section [3.1.4](#viewing-json-in-the-browser).  When `render_template()` is called on this template, Flask will replace the for loop with mulitple instances of whatever is inside the `{%%}` tags.  
+Next, we'll iterate over all of the repositories in the `items` list using Jinja2's [for loop syntax][jinja2-for], making a list item for each one.  We know to do this because of the JSON response structure we saw in section [3.1.4](#viewing-json-in-the-browser).  When `render_template()` is called on this template, Flask will replace the for loop with multiple instances of whatever is inside the `{%%}` tags.  
 
 In general, Jinja2 code that contains `{%%}` is for control flow, and will not be displayed literally on the web page.
 
@@ -2080,7 +2080,7 @@ Now, we can delete everything that is in `search.html` from `results.html`, and 
 ```
 
 
-And that's it!  When `render_template()` is called on `results.html`, Flask sees that `results.html` extends `search.html`, so it renders `search.html` filling in any `{% block %}`s that were define in `results.html`.  When `search.html` is rendered, the empty `{% block %}` is ignored.  
+And that's it!  When `render_template()` is called on `results.html`, Flask sees that `results.html` extends `search.html`, so it renders `search.html` filling in any `{% block %}`s that were defined in `results.html`.  When `search.html` is rendered, the empty `{% block %}` is ignored.  
 
 View it live!  You'll see the form persist into the results page, even though `results.html` doesn't have the form HTML in it.
 
