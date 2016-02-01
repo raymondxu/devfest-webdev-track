@@ -1,6 +1,6 @@
 <a id="top"></a>
 # DevFest Web Development Track
-*Learn web development by building a simple reading list app with Flask.*
+*Learn web development by building a reading list app with Flask.*
 
 Written and developed by [Raymond Xu](http://www.raymondxu.io), [Matt Piccolella](http://mattpic.com), [Dan Schlosser](http://schlosser.io), and [ADI](http://www.adicu.com).
 
@@ -54,8 +54,7 @@ Basic knowledge of the Python programming language is suggested. If you don't al
 		-	[3.2.2 Using cURL](#using-curl)
 		-	[3.2.3 Using Python](#using-python)
 		-	[3.2.4 Using Flask: Extending the Search Route](#using-flask-extending-the-search-route)
-		-	[3.2.5 Extension: Parsing JSON](#parsing-json)
-		-	[3.2.6 Extension: Using JavaScript](#using-javascript)
+		-	[3.2.5 Extension: Using JavaScript](#using-javascript)
 	-	[3.3 Displaying Search Results](#displaying-search-results)
 		-	[3.3.1 Template Variables Using Jinja2](#template-variables-using-jinja2)
 		-	[3.3.2 Extending Templates](#extending-templates)
@@ -132,7 +131,7 @@ This is a very basic directory structure for a Flask webapp.
 <a href="#top" class="top" id="hello-world-in-flask">Top</a>
 ## 1.2 Hello World in Flask
 
-Download the starter code for level 1 [here](dl.dropboxusercontent.com/s/z7lpnxld4ew0nfi/level0-done.zip?dl=0). Make sure that you move your `Vagrantfile` and `bootstrap.sh` into the same directory as the code. For the rest of the tutorial, we'll assume that you're inside of your Vagrant box and editing your code with Sublime Text.
+Download the starter code for level 1 [here](http://dl.dropboxusercontent.com/s/z7lpnxld4ew0nfi/level0-done.zip?dl=0). Make sure that you move your `Vagrantfile` and `bootstrap.sh` into the same directory as the code. For the rest of the tutorial, we'll assume that you're inside of your Vagrant box and editing your code with Sublime Text.
 
 In order to write our first Flask app, we only need to edit one file: `app.py`.  It's that easy!
 
@@ -652,7 +651,7 @@ Try it out by going to `localhost:5000` and clicking the "Launch App" button!
 <a href="#top" class="top" id="level2">Top</a>
 # Level 2: Styling our App: CSS
 
-If you have not completed the previous levels, download the starter code for level 2 [here](dl.dropboxusercontent.com/s/pyukm6lfyff1ldq/level1-done.zip?dl=0).
+> If you have not completed the previous levels, download the starter code for level 2 [here](http://dl.dropboxusercontent.com/s/pyukm6lfyff1ldq/level1-done.zip?dl=0).
 
 Now that we have a basic landing page, let's add some styling to it so it doesn't look so bland!
 
@@ -1372,7 +1371,7 @@ Great! Now we have a basic landing page styled using CSS and foundation. We will
 <a href="#top" class="top" id="api-basics">Top</a>
 ## 3.1 API Basics
 
-If you have not completed the previous levels, download the starter code for level 3 [here](dl.dropboxusercontent.com/s/r6iobob0ilku4dk/level2-done.zip?dl=0).
+> If you have not completed the previous levels, download the starter code for level 3 [here](http://dl.dropboxusercontent.com/s/r6iobob0ilku4dk/level2-done.zip?dl=0).
 
 This section will take a step aside from our Flask project to build a foundation of knowledge around APIs and how they are used.  We will return to our app in [section 3.2](#google-books-api).
 
@@ -1386,7 +1385,7 @@ URL | Image
 [`http://placekitten.com/g/200/150`](http://placekitten.com/g/200/150) | ![http://placekitten.com/g/200/150](http://placekitten.com/g/200/150)
 [`http://placekitten.com/g/300/250`](http://placekitten.com/g/300/250) | ![http://placekitten.com/g/200/300](http://placekitten.com/g/300/250)
 
-The advantage in using a REST API here is that we don't need to remember the URL of the image we want, just the qualities (grayscale, 500x500).  Then, using the *documentation* provided at [placekitten.com](http://placekitten.com), we can derive the URL necessary to find the image we want.
+The advantage in using a REST API here is that we don't need to remember the URL of the image we want, just the quality (500x500).  Then, using the *documentation* provided at [placekitten.com](http://placekitten.com), we can derive the URL necessary to find the image we want.
 
 > Many web designers use placeholder image APIs like [placekitten.com](http://placekitten.com) or [placehold.it](http://placehold.it) in their designs, as they speed up prototyping.
 
@@ -1688,7 +1687,7 @@ browse the internet a little. Check out [here](http://www.example.com) for an ex
 <a href="#top" class="top" id="google-books-api">Top</a>
 ## 3.2 Google Books API
 
-In order to search for books using our search route (started in [1.3.2](#dynamic-routes)), we'll use the Google Books API.  The first step for using any API is to familiarize yourself with its documentation, and so our first stop is [https://developers.google.com/books/docs/v1/reference/][google-books-docs].  We know that we want to search for books, so we'll focus on the ["Volume" section][google-books-docs-volume].
+In order to search for books using our search route, we'll use the Google Books API.  The first step for using any API is to familiarize yourself with its documentation, and so our first stop is [https://developers.google.com/books/docs/v1/reference/][google-books-docs].  We know that we want to search for books, so we'll focus on the ["Volume" section][google-books-docs-volume].
 
 <a id="determining-the-request-url"></a>
 ### 3.2.1 Determining the Request URL
@@ -1862,21 +1861,8 @@ def search():
 
 We haven't written `results.html` yet, so the search functionality still isn't complete. Let's learn how to dynamically populate an HTML page with the data we get back from an API.
 
-<a id="parsing-json"></a>
-### 3.2.5 Extension: Parsing JSON
-
-The JSON response that Google Books sends us is extremely long, and full of URLs that we don't need for our app.  We can't do anything about what they send us, but we it would be good practice to minimize the amount of data being sent to the client.
-
-All we really need from each book item in the `items` array is:
-
--	`volumeInfo` (for `title` and `authors`),
--	`accessInfo` (for `webReaderLink`)
-
-We should also keep the `totalItems` key-value pair.
-
-
 <a id="using-javascript"></a>
-### 3.2.6 Extension: Using JavaScript
+### 3.2.5 Extension: Using JavaScript
 
 *If you're familiar with JavaScript and would prefer to interact with the Google Books API using JavaScript, we'll go over how
 to do that in this section. If you don't know JavaScript, feel free to skip it.*
@@ -2134,9 +2120,9 @@ Create a file called `base.html` in the `/templates` directory. Here, we will pl
 </html>
 ```
 
-<i>Note that we use `url_for` here to let Flask find the correct files for us since we are generalizing.</i>
+<i>Note that we use `url_for` here to let Flask find the correct files for us.</i>
 
-Now, we can modify strip the other HTML files to their unique components:
+Now, we can strip the other HTML files to their unique components and let inheritance take care of the common components:
 
 `hello.html`:
 
@@ -2169,7 +2155,7 @@ Now, we can modify strip the other HTML files to their unique components:
 {% endblock %}
 ```
 
-<i>We added some Foundation here to position the search bar and button.</i>
+We added some Foundation here in `search.html` to properly position the search bar and button.
 
 
 `results.html`:
@@ -2257,19 +2243,19 @@ As an exercise, wrap each `{{ }}` statement in a Jinja2 `{% if %}`, checking if 
 <a href="#top" class="top" id="level4">Top</a>
 # Level 4: Storing Favorites: Databases
 
-If you have not completed the previous levels, download the starter code for level 4 [here](dl.dropboxusercontent.com/s/s69dlb4asw1ewxu/level3-done.zip?dl=0).
+> If you have not completed the previous levels, download the starter code for level 4 [here](http://dl.dropboxusercontent.com/s/s69dlb4asw1ewxu/level3-done.zip?dl=0).
 
 Right now, our website allows us to search for books. However, it would be nice if we had a way to save books that looked interesting. Let's work on adding a "Favorites" feature, which will allow us to mark our favorite books.
 
 <a href="#top" class="top" id="mongo-db">Top</a>
 ## 4.1 Using MongoDB
-To store favorites for our application, we're going to be used a database called MongoDB.
+To store favorites for our application, we're going to be using a database called MongoDB.
 
 <a id="what-database"></a>
 ### 4.1.1 What is a database?
-In order to store favorites for our app, we'll need to be use a database. A [database][database] is essentially just an organized collection of data. The data can be anything: bank transactions, songs, restaurant reservations, anything. As long as you have an organized way of representing it, you can store it.
+In order to store favorites for our app, we'll need to use a database. A [database][database] is essentially just an organized collection of data. The data can be anything: bank transactions, songs, restaurant reservations, anything. As long as you have an organized way of representing it, you can store it.
 
-They are incredibly common; almost every application that you have every used probably has a database to store some kind of data. There's a lot of things you can do with a database, but for this tutorial we'll only focus on the basics, which can be remembered by the [CRUD][crud] acronym: create, read, update, and delete.
+Databases are incredibly common; almost every application that you have ever used probably has a database to store some kind of data. There's a lot of things you can do with a database, but for this tutorial we'll only focus on the basics, which can be remembered by the [CRUD][crud] acronym: create, read, update, and delete.
 
 <a id="what-mongo"></a>
 ### 4.1.2 What is MongoDB?
@@ -2303,7 +2289,7 @@ The import statement brings in the `MongoEngine` object, which is the basic obje
 
 <a href="#top" class="top" id="model">Top</a>
 ## 4.2 Adding a Model
-Now that we have our database all set-up, we need to specify what kind of data we're going to be storing. Generally, to specify this, we create a [database model][database-model], which determines what our data is and how it will be stored. Let's work on creating our model.
+Now that we have our database all set up, we need to specify what kind of data we're going to be storing. Generally, to specify this, we create a [database model][database-model], which determines what our data is and how it will be stored. Let's work on creating our model.
 
 <a id="fav-book"></a>
 ### 4.2.1 Creating a `FavoriteBook` Model
@@ -2375,7 +2361,7 @@ Now that we're done, we're all done with the functionality to add books to our f
 
 <a href="#top" class="top" id="view-fav">Top</a>
 ## 4.3 Viewing Favorites
-Now that we've started adding books to our favorites, we'll need a screen to view all the books we've already added to favorites. We'll build that now.
+Now that we've started adding books to our favorites, we'll need a screen to view all the books we've already added to favorites. Let's build that now.
 
 <a id="query-obj"></a>
 ### 4.3.1 Querying for Objects
@@ -2431,7 +2417,7 @@ Try adding some books to your favorites. Your page should look something like th
 <a href="#top" class="top" id="level5">Top</a>
 # Level 5: Adding User-Specific Favorites: Sessions & Accounts
 
-If you have not completed the previous levels, download the starter code for level 5 [here](dl.dropboxusercontent.com/s/7rvjhx7v5fn9rkp/level4-done.zip?dl=0).
+> If you have not completed the previous levels, download the starter code for level 5 [here](http://dl.dropboxusercontent.com/s/7rvjhx7v5fn9rkp/level4-done.zip?dl=0).
 
 If you add lots of favorites to your list, you'll notice it might get crowded. If you're going to have more than one user, it probably makes sense to have a favorites list for each user of your website; that way, different users can have different favorites. We're going to work on that in this section.
 
@@ -2511,7 +2497,7 @@ There are two problems with our above `Flask-Login` situation: first, there's no
 
 <a id="wtforms"></a>
 ### 5.2.1 Create a `UserForm` with WTForms
-[`WTForms`][#wtforms] is an incredibly useful library that helps us to generate forms that are really easy to validate. Form validation can be an incredibly tedious task. Normally you have to write custom JavaScript to check all sorts of things. Do the passwords match? Is your email address the correct format? Did you fill out all the required inputs. `WTForms` makes this really easy to do.
+`WTForms` is an incredibly useful library that helps us to generate forms that are really easy to validate. Form validation can be an incredibly tedious task. Normally you have to write custom JavaScript to check all sorts of things. Do the passwords match? Is your email address the correct format? Did you fill out all the required inputs? `WTForms` makes this really easy to do.
 
 Particularly useful is a method called `model_form`, which automatically creates a form given a `MongoEngine` model. So, given the `User` object we just created, creating a form for it can be done in two lines. Add these just under your `User` class definition:
 
@@ -2581,7 +2567,7 @@ Try going to `localhost:5000/register`. It should look something like this:
 
 ![Register](https://dl.dropboxusercontent.com/s/j7ggzjyj7jyyvo3/register.png)
 
-Fill out the form and press register; if all goes according to plan, you should be redirected to the `/login` page, which should give you a 404 error. Let's page that page now.
+Fill out the form and press register; if all goes according to plan, you should be redirected to the `/login` page, which should give you a 404 error. Let's make that page now.
 
 <a id="login"></a>
 ### 5.2.3 Creating a Login Page
@@ -2645,7 +2631,7 @@ After you add the `logout_user` function to your `flask.ext.login` import statem
 ### 5.2.5 Adding Home Page Buttons
 Now that we have registration and login options, let's show our users how to get to them. We can do this by changing the buttons on our home page.
 
-Open up `hello.html`. Currently, we have a button that says "Enter App":
+Open up `hello.html`. Currently, we have a button that says "Launch App":
 
 ```html
 <a href="/search"><button class="launch-button">Launch App</button></a>
@@ -2738,7 +2724,7 @@ def favorite(id):
 
 Basically everything stays the same, except we query for the current user object with the call `User.objects(name=current_user.name).first()`. Be sure to import `current_user`, as it's a built-in variable for `FlaskLogin`. We can be sure to return `first()` because login is required on this page, which means that we will certainly have a user of the name of the currently logged-in user.
 
-Try adding a few favorite books to your account; if everything works normally, then that means we're very close.
+Try adding a few favorite books to your account; if everything works normally, then that means we're very close to finishing our app!
 
 <a id="change_fav_page"></a>
 ### 5.3.3 Changing our Favorites Page
@@ -2766,6 +2752,10 @@ To view our finalized product, check out my personalized page, after I added a f
 
 ![Personalized Recommendations](https://dl.dropboxusercontent.com/s/7z9vv03tpydvwvk/personalfaves.png)
 
+Congratulations! You have completed the DevFest 2016 Web Development Track and built a fully-functional reading list app. Now, you can be creative and add more features to the app, change the look of the webpages, or anything you can imagine. You can also build an entirely different web app using the skills you have just learned!
+
+Thanks for reading!
+
 <a href="#top" class="top" id="additionalresources">Top</a>
 # Additional Resources
 Along with this tutorial, there is a wealth of information available on Python, Flask, and web development all across the web. Below are some good places to start:
@@ -2777,7 +2767,6 @@ Along with this tutorial, there is a wealth of information available on Python, 
 - [CSS Zen Garden][css-zen]
 - [Jinja Templates][jinja-templ]
 
-Thanks for reading!
 
 [github]: https://github.com/RaymondXu/devfest-webdev-track.git
 [learn]: http://adicu.com/learn
