@@ -2213,7 +2213,7 @@ What if there are no results from the search?  The `items` list will be empty, a
 {% extends "search.html" %}
 {% block results %}
 <div class="results">
-	{% if api_data["items"] %}
+	{% if api_data["totalItems"] > 0 %}
 		<ul>
 		{% for book in api_data["items"] %}
 			<li>
