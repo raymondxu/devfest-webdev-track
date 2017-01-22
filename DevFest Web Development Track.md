@@ -2267,9 +2267,7 @@ MongoDB is what's called a [NoSQL](nosql) database, which means data isn't store
 ### 4.1.3 Using Flask-Mongoengine
 To use MongoDB, Flask provides a really nice add-on called [`Flask-Mongoengine`][flask-mongoengine], which allows us to perform our CRUD operations directly from our Flask app.
 
-To get started using MongoDB, first install it! 
-
-To get started using it, first install MongoDB; follow the instruction guide for your operating system [here][mongo-download-general]).
+To get started using MongoDB, first install it! Follow the instruction guide for your operating system [here][mongo-download-general]).
 
 Once you've done that, we'll need to install `Flask-Mongoengine`. Ensure your `virtualenv` virtual environment is activated (you should see the name of your directory prepended to your terminal prompt). Then, run the following command:
 
