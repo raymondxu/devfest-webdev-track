@@ -131,7 +131,27 @@ This is a very basic directory structure for a Flask webapp.
 <a href="#top" class="top" id="hello-world-in-flask">Top</a>
 ## 1.2 Hello World in Flask
 
-Download the starter code for level 1 [here](http://dl.dropboxusercontent.com/s/z7lpnxld4ew0nfi/level0-done.zip?dl=0). Make sure that you move your `Vagrantfile` and `bootstrap.sh` into the same directory as the code. For the rest of the tutorial, we'll assume that you're inside of your Vagrant box and editing your code with Sublime Text.
+Download the starter code for level 1 [here](http://dl.dropboxusercontent.com/s/z7lpnxld4ew0nfi/level0-done.zip?dl=0). For the rest of the tutorial, we'll assume that you're inside of your `virtualenv` virtual environment and editing your code with Sublime Text.
+
+As a refresher, here's a set of steps you can follow to quickly set up your development environment (all the packages you'll need) safely in a virtual environment (ProjectDirectory is the name of the folder that contains all of your code. If you have just downloaded the starter code, the directory name will be `level0-done`, but you may change it to whatever you want) :
+
+```
+cd ProjectDirectory
+virtualenv venv
+source venv/bin/activate
+sudo pip install -r requirements.txt
+```
+
+or, if you're on a PC:
+
+```
+cd ProjectDirectory
+virtualenv venv
+venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+As we mentioned back in __Level 0: Environment Setup__, we can painlessly install packages into our virtual environment by asking `pip` to install from a list of packages. That list is `requirements.txt`, and conveniently prevents you from having to install each package individually. Isn't that great?
 
 In order to write our first Flask app, we only need to edit one file: `app.py`.  It's that easy!
 
@@ -2267,9 +2287,9 @@ MongoDB is what's called a [NoSQL](nosql) database, which means data isn't store
 ### 4.1.3 Using Flask-Mongoengine
 To use MongoDB, Flask provides a really nice add-on called [`Flask-Mongoengine`][flask-mongoengine], which allows us to perform our CRUD operations directly from our Flask app.
 
-To get started using it, first install MongoDB; if you're inside your Vagrant box, you should follow the instruction guide for Ubuntu available [here][mongo-download-linux] (NOTE: if you're not inside your box, installation guides for other operating systems are available [here][mongo-download-general]).
+To get started using MongoDB, first install it! Follow the instruction guide for your operating system [here][mongo-download-general]).
 
-Once you've done that, we'll need to install `Flask-Mongoengine`. To do that, run the following command:
+Once you've done that, we'll need to install `Flask-Mongoengine`. Ensure your `virtualenv` virtual environment is activated (you should see the name of your directory prepended to your terminal prompt). Then, run the following command:
 
 ```bash
 $ sudo pip install flask-mongoengine
