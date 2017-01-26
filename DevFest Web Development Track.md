@@ -1361,7 +1361,7 @@ And in `search.html`:
 ...
 ```
 
-Great! Now we have a basic landing page styled using CSS and foundation. We will style the rest of our app after we finish implementing functionality.
+Great! Now we have a basic landing page styled using CSS and foundation. We will style the rest of our app after we finish implementing some functionality.
 
 ![style](../img/level2_hello.png)
 
@@ -1403,7 +1403,7 @@ This URL breaks up into six parts:
 3.	The subdomain (`www.`): Not always required.
 4.	The host (`googleapis.com`): A host is usually a domain name (this is the case for our url), but it could also be an IP Address.
 5.	The path (`/books/v1/volumes`): Everything from the first `/` up to the `?` that starts the query string is the path. When accessing a web page, often these paths will be hierarchical and include a filename at the end, like `/blog/2014/02/post.html`.  When making API calls, these paths are the API method that is being called.  Here, we are searching books.
-6.	The query string (`q=Treasure`): is af key-value pair of the form `<key>=<value>`. The query string starts with a `?` and have have multiple key-value pairs that are separated by `&`. The key value pairs here are:
+6.	The query string (`q=Treasure`): is a key-value pair of the form `<key>=<value>`. The query string starts with a `?` and can have multiple key-value pairs that are separated by `&`. In our case we only have one pair.
 
 
 > This URL schema is by no means complete; it encompasses the parts of a URL that are most relevant to API programming.  For a more complete view, check out [this blog post][url-google] by Google's Matt Cutts, or this exhaustive [Wikipedia entry][url-wikipedia].
