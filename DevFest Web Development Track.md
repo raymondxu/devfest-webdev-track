@@ -133,7 +133,7 @@ This is a very basic directory structure for a Flask webapp.
 
 Download the starter code for level 1 [here](http://dl.dropboxusercontent.com/s/z7lpnxld4ew0nfi/level0-done.zip?dl=0). For the rest of the tutorial, we'll assume that you're inside of your `virtualenv` virtual environment and editing your code with Sublime Text.
 
-As a refresher, here's a set of steps you can follow to quickly set up your development environment (all the packages you'll need) safely in a virtual environment:
+As a refresher, here's a set of steps you can follow to quickly set up your development environment (all the packages you'll need) safely in a virtual environment (ProjectDirectory is the name of the folder that contains all of your code. If you have just downloaded the starter code, the directory name will be `level0-done`, but you may change it to whatever you want) :
 
 ```
 cd ProjectDirectory
