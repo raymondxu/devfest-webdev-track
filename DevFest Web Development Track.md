@@ -131,12 +131,12 @@ This is a very basic directory structure for a Flask webapp.
 <a href="#top" class="top" id="hello-world-in-flask">Top</a>
 ## 1.2 Hello World in Flask
 
-Download the starter code for level 1 [here](http://dl.dropboxusercontent.com/s/z7lpnxld4ew0nfi/level0-done.zip?dl=0). For the rest of the tutorial, we'll assume that you're inside of your `virtualenv` virtual environment and editing your code with Sublime Text.
+Download the starter code for level 1 [here](https://github.com/RaymondXu/devfest-webdev-track-code/tree/level1). Click on the green button that says "Clone or Download" and then click "Download ZIP", and then unzip the downloaded file. You should now have a directory on your computer called `level0`. Let's rename the directory to `reading-list-app`. For the rest of the tutorial, we'll assume that you're inside of your `virtualenv` virtual environment and editing your code with Sublime Text.
 
-As a refresher, here's a set of steps you can follow to quickly set up your development environment (all the packages you'll need) safely in a virtual environment (ProjectDirectory is the name of the folder that contains all of your code. If you have just downloaded the starter code, the directory name will be `level0-done`, but you may change it to whatever you want) :
+As a refresher, here's a set of steps you can follow to quickly set up your development environment (all the packages you'll need) safely in a virtual environment:
 
 ```
-cd ProjectDirectory
+cd reading-list-app
 virtualenv venv
 source venv/bin/activate
 sudo pip install -r requirements.txt
@@ -145,7 +145,7 @@ sudo pip install -r requirements.txt
 or, if you're on a PC:
 
 ```
-cd ProjectDirectory
+cd reading-list-app
 virtualenv venv
 venv\Scripts\activate
 pip install -r requirements.txt
@@ -671,7 +671,7 @@ Try it out by going to `localhost:5000` and clicking the "Launch App" button!
 <a href="#top" class="top" id="level2">Top</a>
 # Level 2: Styling our App: CSS
 
-> If you have not completed the previous levels, download the starter code for level 2 [here](http://dl.dropboxusercontent.com/s/pyukm6lfyff1ldq/level1-done.zip?dl=0).
+> If you have not completed the previous levels, download the starter code for level 2 [here](https://github.com/RaymondXu/devfest-webdev-track-code/tree/level2).
 
 Now that we have a basic landing page, let's add some styling to it so it doesn't look so bland!
 
@@ -1391,7 +1391,7 @@ Great! Now we have a basic landing page styled using CSS and foundation. We will
 <a href="#top" class="top" id="api-basics">Top</a>
 ## 3.1 API Basics
 
-> If you have not completed the previous levels, download the starter code for level 3 [here](http://dl.dropboxusercontent.com/s/r6iobob0ilku4dk/level2-done.zip?dl=0).
+> If you have not completed the previous levels, download the starter code for level 3 [here](https://github.com/RaymondXu/devfest-webdev-track-code/tree/level3).
 
 This section will take a step aside from our Flask project to build a foundation of knowledge around APIs and how they are used.  We will return to our app in [section 3.2](#google-books-api).
 
@@ -2263,7 +2263,7 @@ As an exercise, wrap each `{{ }}` statement in a Jinja2 `{% if %}`, checking if 
 <a href="#top" class="top" id="level4">Top</a>
 # Level 4: Storing Favorites: Databases
 
-> If you have not completed the previous levels, download the starter code for level 4 [here](http://dl.dropboxusercontent.com/s/s69dlb4asw1ewxu/level3-done.zip?dl=0).
+> If you have not completed the previous levels, download the starter code for level 4 [here](https://github.com/RaymondXu/devfest-webdev-track-code/tree/level4).
 
 Right now, our website allows us to search for books. However, it would be nice if we had a way to save books that looked interesting. Let's work on adding a "Favorites" feature, which will allow us to mark our favorite books.
 
@@ -2437,7 +2437,7 @@ Try adding some books to your favorites. Your page should look something like th
 <a href="#top" class="top" id="level5">Top</a>
 # Level 5: Adding User-Specific Favorites: Sessions & Accounts
 
-> If you have not completed the previous levels, download the starter code for level 5 [here](http://dl.dropboxusercontent.com/s/7rvjhx7v5fn9rkp/level4-done.zip?dl=0).
+> If you have not completed the previous levels, download the starter code for level 5 [here](https://github.com/RaymondXu/devfest-webdev-track-code/tree/level5).
 
 If you add lots of favorites to your list, you'll notice it might get crowded. If you're going to have more than one user, it probably makes sense to have a favorites list for each user of your website; that way, different users can have different favorites. We're going to work on that in this section.
 
