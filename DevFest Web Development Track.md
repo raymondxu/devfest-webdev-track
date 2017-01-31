@@ -2331,7 +2331,7 @@ class FavoriteBook(db.Document):
 Now that we have our model created, we're going to want to actually create a model to save a model as a favorite. To do that, let's first add a button to each of our search results. Below the `h5` tag that shows our authors, add the following code to provide a link to do so:
 
 ```html
-<a href="/favorite/{{ book.volumeInfo.id }}">Add to favorites</a>
+<a href="/favorite/{{ book.id }}">Add to favorites</a>
 ```
 
 Our search page should now look like this:
