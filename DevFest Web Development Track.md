@@ -131,7 +131,7 @@ This is a very basic directory structure for a Flask webapp.
 <a href="#top" class="top" id="hello-world-in-flask">Top</a>
 ## 1.2 Hello World in Flask
 
-Download the starter code for level 1 [here](https://github.com/RaymondXu/devfest-webdev-track-code/tree/level1). Click on the green button that says "Clone or Download" and then click "Download ZIP", and then unzip the downloaded file. You should now have a directory on your computer called `level0`. Let's rename the directory to `reading-list-app`. For the rest of the tutorial, we'll assume that you're inside of your `virtualenv` virtual environment and editing your code with Sublime Text.
+Download the starter code for level 1 [here](https://github.com/RaymondXu/devfest-webdev-track-code/tree/level1). Click on the green button that says "Clone or Download" and then click "Download ZIP", and then unzip the downloaded file. You should now have a directory on your computer called `devfest-webdev-track-code`. Let's rename the directory to `reading-list-app`. For the rest of the tutorial, we'll assume that you're inside of your `virtualenv` virtual environment and editing your code with Sublime Text.
 
 As a refresher, here's a set of steps you can follow to quickly set up your development environment (all the packages you'll need) safely in a virtual environment:
 
