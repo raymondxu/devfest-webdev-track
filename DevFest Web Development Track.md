@@ -1759,8 +1759,6 @@ Python has several built-in libraries for handling REST APIs, but we will be usi
 $ sudo pip install requests
 ```
 
-Don't forget to update your `requirements.txt` file to reflect this change!
-
 Create a new python file:
 
 ```bash
