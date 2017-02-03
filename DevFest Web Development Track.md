@@ -2287,6 +2287,8 @@ To use MongoDB, Flask provides a really nice add-on called [`Flask-Mongoengine`]
 
 To get started using MongoDB, first install it! Follow the instruction guide for your operating system [here][mongo-download-general]).
 
+Make sure you also create the necessary `/data/db` folder and run `mongod`, as detailed in the instruction guide.
+
 Once you've done that, we'll need to install `Flask-Mongoengine`. Ensure your `virtualenv` virtual environment is activated (you should see the name of your directory prepended to your terminal prompt). Then, run the following command:
 
 ```bash
